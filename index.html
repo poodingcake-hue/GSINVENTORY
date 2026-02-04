@@ -236,16 +236,38 @@
 
         #product-image-container {
             margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            background: #fcfcfc;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #f0f0f0;
         }
 
         #product-image {
-            width: 75% !important;
-            height: auto !important;
-            object-fit: cover;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            max-width: 100%;
+            height: auto;
+            max-height: 400px;
+            object-fit: contain;
             display: block;
-            margin: 0 auto;
+            transition: opacity 0.3s ease-in-out;
+            will-change: opacity;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         /* 재고 테이블 - 가독성 개선 */
@@ -851,6 +873,12 @@
         .delete-btn:hover {
             color: var(--color-danger);
         }
+
+        .btn-loading {
+            opacity: 0.6 !important;
+            pointer-events: none !important;
+            cursor: wait !important;
+        }
     </style>
 </head>
 
@@ -877,9 +905,8 @@
 
         <div id="col2" class="column">
             <div id="product-details-content" class="hidden">
-                <div id="product-image-container" style="margin-bottom: 20px;">
-                    <img id="product-image" src="" alt="상품 이미지"
-                        style="width: 75% !important; height: auto !important; object-fit: cover; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); display: block; margin: 0 auto;">
+                <div id="product-image-container">
+                    <img id="product-image" src="" alt="상품 이미지">
                 </div>
                 <div class="info-header">
                     <span id="product-location" class="info-location" title="클릭하여 위치 수정"></span>
@@ -1026,6 +1053,8 @@
         let currentProductCode = null;
         let rentalCart = [];
         let currentReturnItems = [];
+        const imageMemoryCache = {}; // 세션 이미지 캐시
+        let searchTimeout = null;     // 검색 디바운싱용
 
         // 유의어 사전
         const SYNONYMS = {
@@ -1160,11 +1189,16 @@
                 }
             });
 
-            // 상품 검색 리스너
+            // 상품 검색 리스너 (디바운싱 적용: 200ms)
             var prodSearch = document.getElementById('product-search-input');
             var prodSearchBtn = document.getElementById('product-search-btn');
             if (prodSearch) {
-                prodSearch.addEventListener('input', function (e) { renderProductList(null, e.target.value); });
+                prodSearch.addEventListener('input', function (e) {
+                    if (searchTimeout) clearTimeout(searchTimeout);
+                    searchTimeout = setTimeout(function () {
+                        renderProductList(null, e.target.value);
+                    }, 200);
+                });
                 prodSearch.addEventListener('keydown', function (e) { if (e.key === 'Enter') renderProductList(null, prodSearch.value); });
             }
             if (prodSearchBtn) prodSearchBtn.onclick = function () { renderProductList(null, prodSearch.value); };
@@ -1347,60 +1381,68 @@
 
             var inventoryData = appData.rawData.filter(function (item) { return item.productCode === productCode && item.quantity > 0; });
 
-            // --- 이미지 표시 로직 (1순위: 시트 C열, 2순위: 웹 자동생성) ---
+            // --- 최적화된 이미지 표시 로직 (Fast-First + Memory Cache) ---
             var singleImg = document.getElementById('product-image');
             var sheetImageUrl = appData.images[productCode];
             var webImageUrl = generateGsShopUrl(productCode);
 
-            console.log("Rendering Image for Product:", productCode);
-            console.log("Sheet Image URL (C column):", sheetImageUrl);
-            console.log("Web Image URL (GS SHOP):", webImageUrl);
+            console.log("Rendering Image (Optimized) for Product:", productCode);
 
-            // 초기 로딩 표시
-            singleImg.src = 'https://via.placeholder.com/250x250?text=Loading...';
+            // 1. 메모리 캐시 확인 (있으면 즉시 표시하고 종료)
+            if (imageMemoryCache[productCode]) {
+                console.log("Memory Cache Hit!");
+                singleImg.src = imageMemoryCache[productCode];
+                // 불필요한 연산 방지를 위해 여기서 반환 연계 처리 생략 (아래 UI 업데이트는 필요)
+            } else {
+                // 2. 즉시 웹 이미지 표시 (가장 빠름)
+                singleImg.classList.remove('fade-in');
+                singleImg.src = webImageUrl || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+                void singleImg.offsetWidth; // 브라우저가 변경사항을 즉시 인식하도록 함
+                singleImg.classList.add('fade-in');
 
-            if (sheetImageUrl) {
-                // 1순위: 시트에 이미지가 있는 경우
-                if (sheetImageUrl.indexOf('drive.google.com') !== -1) {
-                    console.log("Attempting to fetch Google Drive image via backend...");
-                    // 구글 드라이브 링크인 경우 Base64 변환 시도
+                // 3. 드라이브 주소가 있는 경우 백그라운드에서 고화질 로드
+                if (sheetImageUrl && sheetImageUrl.indexOf('drive.google.com') !== -1) {
                     callBackend('getDriveImageBase64', sheetImageUrl)
                         .then(function (result) {
-                            // Backend 결과가 객체인지 확인 (result.data 확인)
-                            var imageData = (result && typeof result === 'object' && result.data) ? result.data : result;
-
-                            if (imageData && typeof imageData === 'string' && imageData.startsWith('data:image')) {
-                                console.log("Google Drive image loaded successfully.");
-                                singleImg.src = imageData;
+                            var imageData = "";
+                            if (result && typeof result === 'object' && result.data) {
+                                imageData = result.data;
+                                if (result.mimeType && typeof imageData === 'string' && imageData.indexOf('data:') !== 0) {
+                                    imageData = 'data:' + result.mimeType + ';base64,' + imageData;
+                                }
                             } else {
-                                console.warn("Invalid image data received:", result);
-                                // 변환 실패 시 웹 이미지로 대체
-                                singleImg.src = webImageUrl || 'https://via.placeholder.com/250x250?text=No+Image';
+                                imageData = result;
+                            }
+
+                            if (typeof imageData === 'string' && imageData.indexOf('data:') === 0) {
+                                console.log("Drive Image loaded and cached.");
+                                imageMemoryCache[productCode] = imageData; // 캐시 저장
+
+                                // 다른 상품으로 넘어갔을 수 있으므로 코드 확인 후 교체
+                                if (currentProductCode === productCode) {
+                                    singleImg.style.opacity = '0.5';
+                                    setTimeout(function () {
+                                        singleImg.src = imageData;
+                                        singleImg.style.opacity = '1';
+                                    }, 50);
+                                }
                             }
                         })
                         .catch(function (err) {
-                            console.error("Google Drive Image Backend Error:", err);
-                            singleImg.src = webImageUrl || 'https://via.placeholder.com/250x250?text=Error';
+                            console.warn("Drive image load failed. Current image remains.", err);
                         });
-                } else {
-                    console.log("Using direct link from Sheet.");
-                    // 직링크 등 일반 URL인 경우 바로 적용
+                } else if (sheetImageUrl) {
+                    // 드라이브가 아닌 직접 링크인 경우 즉시 교체 및 캐싱
                     singleImg.src = sheetImageUrl;
+                    imageMemoryCache[productCode] = sheetImageUrl;
                 }
-            } else {
-                console.log("No image URL in Sheet. Using web image fallback.");
-                // 2순위: 시트에 이미지가 없는 경우 웹 이미지 시도
-                singleImg.src = webImageUrl || 'https://via.placeholder.com/250x250?text=No+Image';
             }
 
             // 이미지 로드 에러 발생 시 최종 Fallback
             singleImg.onerror = function () {
-                console.error("Image failed to load:", this.src);
-                if (this.src !== webImageUrl && webImageUrl) {
-                    console.log("Falling back to web image after load error.");
+                var currentSrc = String(this.src);
+                if (currentSrc !== webImageUrl && webImageUrl) {
                     this.src = webImageUrl;
-                } else if (this.src.indexOf('via.placeholder') === -1) {
-                    this.src = 'https://via.placeholder.com/250x250?text=No+Image';
                 }
             };
             // ---------------------------
@@ -1689,16 +1731,43 @@
             if (!checkedItems.length) { showToast('상품 선택 필요'); return; }
             if (!confirm(renterName + '님 대여 진행?')) return;
 
+            var btn = document.getElementById('process-rental-btn');
+            var originalText = btn.textContent;
+            btn.textContent = '처리 중...';
+            btn.classList.add('btn-loading');
+
             callBackend('processRental', checkedItems, renterName)
                 .then(function (result) {
+                    btn.textContent = originalText;
+                    btn.classList.remove('btn-loading');
                     if (result.success) {
-                        showToast(result.message, true);
+                        showToast(result.message || '대여 완료', true);
                         if (result.newRentals) result.newRentals.forEach(function (r) { appData.rentals.push(r); });
+
+                        // --- 실시간 재고 차감 동기화 ---
+                        checkedItems.forEach(function (item) {
+                            var rawItem = appData.rawData.find(function (r) {
+                                return r.productCode === item.productCode && r.color === item.color && r.size === item.size;
+                            });
+                            if (rawItem) {
+                                rawItem.quantity -= item.quantity;
+                            }
+                        });
+                        // 수량이 0 이하가 된 것은 필터링 (선택사항, UI 일관성을 위해)
+                        appData.rawData = appData.rawData.filter(function (r) { return r.quantity > 0; });
+
                         rentalCart = rentalCart.filter(function (item) { return !item.checked; });
                         renderCart();
                         document.getElementById('renter-name').value = '';
+
+                        // 현재 보고 있는 상품의 재고표 즉시 갱신
                         if (currentProductCode) renderProductDetails(currentProductCode, document.getElementById('product-name').textContent);
                     } else { showToast('실패: ' + result.message); }
+                })
+                .catch(function (e) {
+                    btn.textContent = originalText;
+                    btn.classList.remove('btn-loading');
+                    showToast('오류 발생');
                 });
         }
 
@@ -1821,16 +1890,52 @@
             if (!checkedItems.length) { showToast('상품 선택 필요'); return; }
             if (!confirm(returnerName + '님 반납 진행?')) return;
 
+            var btn = document.getElementById('process-return-btn');
+            var originalText = btn.textContent;
+            btn.textContent = '처리 중...';
+            btn.classList.add('btn-loading');
+
             callBackend('processReturn', checkedItems, returnerName)
                 .then(function (result) {
+                    btn.textContent = originalText;
+                    btn.classList.remove('btn-loading');
                     if (result.success) {
-                        showToast(result.message, true);
+                        showToast(result.message || '반납 완료', true);
+
+                        // --- 실시간 재고 가산 동기화 ---
+                        checkedItems.forEach(function (item) {
+                            var rawItem = appData.rawData.find(function (r) {
+                                return r.productCode === item.productCode && r.color === item.color && r.size === item.size;
+                            });
+                            if (rawItem) {
+                                rawItem.quantity += Math.abs(item.quantity);
+                            } else {
+                                // 기존에 재고가 0이 되어 리스트에 없던 경우 새로 추가
+                                appData.rawData.push({
+                                    productCode: item.productCode,
+                                    productName: item.productName,
+                                    skuCode: item.skuCode,
+                                    color: item.color,
+                                    size: item.size,
+                                    quantity: Math.abs(item.quantity),
+                                    location: '확인필요' // 반납 시 위치 정보는 알 수 없으므로 임시값
+                                });
+                            }
+                        });
+
                         if (result.returnedItems) {
                             appData.rentals = appData.rentals.filter(function (item) { return result.returnedItems.indexOf(item.rowIndex) === -1; });
                         }
                         executeSearch();
+
+                        // 현재 보고 있는 상품의 재고표 즉시 갱신
                         if (currentProductCode) renderProductDetails(currentProductCode, document.getElementById('product-name').textContent);
                     } else { showToast('반납 실패: ' + result.message); }
+                })
+                .catch(function (e) {
+                    btn.textContent = originalText;
+                    btn.classList.remove('btn-loading');
+                    showToast('에러 발생');
                 });
         }
 
