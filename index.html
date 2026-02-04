@@ -3,7 +3,7 @@
 <head>
   <base target="_top">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+    @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css");
     :root {
         --color-accent: #6c757d;
         --color-accent-dark: #495057;
@@ -12,6 +12,7 @@
         --color-text-primary: #333;
         --color-text-secondary: #666;
         --color-shadow: rgba(0, 0, 0, 0.08);
+        --font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
         --color-border-light: #e0e0e0;
         --color-danger: #dc3545;
         --color-danger-dark: #c82333;
@@ -20,7 +21,7 @@
     }
 
     /* 전체 레이아웃 */
-    body { font-family: 'Roboto', 'Arial', sans-serif; margin: 0; padding: 0; background-color: var(--color-background); color: var(--color-text-primary); font-size: var(--font-size-base); }
+    body { font-family: var(--font-family); margin: 0; padding: 0; background-color: var(--color-background); color: var(--color-text-primary); font-size: var(--font-size-base); }
     .container { display: flex; width: 100%; height: 100vh; overflow: hidden; }
     .column { padding: 20px; border-right: 1px solid var(--color-border-light); overflow-y: auto; background-color: var(--color-surface); box-sizing: border-box; display: flex; flex-direction: column; }
 
@@ -115,17 +116,17 @@
     .checkout-btn { width: 100%; padding: 14px; background-color: var(--color-accent-dark); color: white; border: none; border-radius: 6px; margin-top: 20px; cursor: pointer; font-size: 1rem; font-weight: 700; transition: background 0.2s; }
     .checkout-btn:hover { background-color: #343a40; }
 
-    /* 반납 리스트 (구조 개선) */
-    .return-list-header { display: flex; background-color: #f1f3f5; padding: 10px 5px; border-top: 1px solid #dee2e6; border-bottom: 1px solid #dee2e6; font-weight: 700; font-size: 0.85em; color: #495057; text-align: center; }
-    .return-item { display: flex; padding: 10px 5px; border-bottom: 1px solid #eee; font-size: 0.9em; align-items: center; text-align: center; transition: background 0.1s; }
-    .return-item:hover { background-color: #f8f9fa; }
-    
-    .col-chk { flex: 0 0 30px; }
-    .col-renter { flex: 0 0 70px; font-weight: 600; color: #333; }
-    .col-name { flex: 1; text-align: left; padding-left: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .col-info { flex: 0 0 60px; color: #666; font-size: 0.85em; }
-    .col-qty { flex: 0 0 40px; color: var(--color-danger); font-weight: bold; }
-    .col-date { flex: 0 0 80px; color: #888; font-size: 0.8em; }
+    .col-chk { flex: 0 0 35px; border-right: 1px solid #eee; height: 100%; display: flex; align-items: center; justify-content: center; }
+    .col-renter { flex: 0 0 70px; font-weight: 600; color: #333; border-right: 1px solid #eee; height: 100%; display: flex; align-items: center; justify-content: center; }
+    .col-main { flex: 1; text-align: left; padding: 8px 12px; display: flex; flex-direction: column; justify-content: center; min-width: 0; }
+    .col-main .prod-title { font-weight: 700; color: #333; margin-bottom: 2px; white-space: normal; line-height: 1.2; word-break: keep-all; }
+    .col-main .prod-sub { font-size: 0.82em; color: #777; margin-top: 2px; }
+    .col-qty { flex: 0 0 45px; color: var(--color-danger); font-weight: 700; border-left: 1px solid #eee; height: 100%; display: flex; align-items: center; justify-content: center; }
+    .col-date { flex: 0 0 85px; color: #888; font-size: 0.78em; border-left: 1px solid #eee; height: 100%; display: flex; align-items: center; justify-content: center; }
+
+    .return-list-header { display: flex; background-color: #f8f9fa; border-top: 1px solid #dee2e6; border-bottom: 2px solid #dee2e6; font-weight: 700; font-size: 0.85em; color: #495057; text-align: center; height: 40px; align-items: center; }
+    .return-item { display: flex; border-bottom: 1px solid #eee; font-size: 0.9em; height: 54px; align-items: center; transition: background 0.1s; background: #fff; }
+    .return-item:hover { background-color: #f1f3f5; }
 
     /* Modals & Toasts */
     .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; display: flex; justify-content: center; align-items: center; }
@@ -141,19 +142,105 @@
     .toast-message { background: rgba(33, 37, 41, 0.9); color: white; padding: 10px 25px; border-radius: 50px; margin-top: 10px; font-size: 0.9rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); animation: fadeInOut 2.5s forwards; }
     @keyframes fadeInOut { 0% { opacity:0; transform:translateY(10px); } 15% { opacity:1; transform:translateY(0); } 85% { opacity:1; transform:translateY(0); } 100% { opacity:0; transform:translateY(-10px); } }
 
-    /* 검색창 스타일 개선 */
-    .search-input-wrapper { display: flex; gap: 5px; position: relative; flex: 1; }
-    .unified-search-input { flex: 1; padding: 10px; border: 1px solid #ced4da; border-radius: 4px; }
-    .search-execute-btn { padding: 0 20px; background: #6c757d; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; }
+    .suggestions-box { position: absolute; top: 100%; left: 0; right: 0; background: #fff; border: 1px solid #ddd; border-top: none; border-radius: 0 0 4px 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 1000; display: none; max-height: 250px; overflow-y: auto; }
+    .suggestions-box.visible { display: block; }
+    .suggestion-item { padding: 10px 15px; cursor: pointer; border-bottom: 1px solid #f8f9fa; display: flex; align-items: center; transition: background 0.1s; font-size: 0.9em; }
+    .suggestion-item:last-child { border-bottom: none; }
+    .suggestion-item:hover { background-color: #f1f3f5; }
+    .suggestion-text { font-weight: 500; color: #333; }
     
     /* 상품 검색 인풋 스타일 */
     .header-with-search { display: flex; justify-content: space-between; align-items: center; margin: 20px 0 10px 0; border-bottom: 1px solid #eee; padding-bottom: 10px; }
     .header-with-search h3 { margin: 0; font-size: 1.1rem; }
-    .product-search-input { padding: 6px 10px; border: 1px solid #ced4da; border-radius: 4px; font-size: 0.9em; width: 140px; }
+    .product-search-container { display: flex; gap: 5px; align-items: center; }
+    .product-search-input { padding: 6px 10px; border: 1px solid #ced4da; border-radius: 4px; font-size: 0.9em; width: 100px; }
+    .small-search-btn { padding: 6px 10px; background: #6c757d; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85em; }
+
+    /* 반출 내역 리스트 아이템 */
+    .rental-history-item { 
+        padding: 12px 0; 
+        font-size: 0.9em;
+    }
+    
+    /* 3열 반납 검색 레이아웃 개편 */
+    .return-search-bar { 
+        display: flex; 
+        align-items: center; 
+        gap: 8px; 
+        margin-bottom: 20px; 
+        background: #fff;
+        padding: 5px 0;
+    }
+    .return-search-input-group { flex: 1; display: flex; gap: 5px; min-width: 0; }
+    .unified-search-input { flex: 1; padding: 10px; border: 1px solid #ced4da; border-radius: 4px; min-width: 0; }
+    
+    .select-all-wrapper { 
+        display: flex; 
+        align-items: center; 
+        gap: 6px; 
+        cursor: pointer; 
+        white-space: nowrap; 
+        font-size: 0.9em; 
+        font-weight: 700;
+        color: #333;
+        padding-left: 5px;
+    }
+    .select-all-checkbox { 
+        width: 18px; 
+        height: 18px; 
+        cursor: pointer;
+        accent-color: var(--color-accent-dark);
+    }
 
     ::-webkit-scrollbar { width: 8px; height: 8px; }
     ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
     ::-webkit-scrollbar-track { background: transparent; }
+
+    /* 3열 고정 헤더 영역 */
+    .sticky-header {
+        position: sticky;
+        top: -20px; /* column의 padding 20px 상쇄 */
+        background: var(--color-surface);
+        z-index: 100;
+        margin: -20px -20px 20px -20px;
+        padding: 20px 20px 10px 20px;
+        border-bottom: 1px solid var(--color-border-light);
+    }
+
+    /* 장바구니 스타일 */
+    .cart-item { 
+        display: flex; 
+        align-items: center; 
+        justify-content: space-between; 
+        padding: 12px; 
+        border: 1px solid #eee; 
+        border-radius: 8px; 
+        margin-bottom: 8px; 
+        background: #fff;
+        transition: transform 0.1s;
+    }
+    .cart-item:hover { transform: translateY(-1px); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+    .cart-info-wrapper { display: flex; align-items: center; flex: 1; min-width: 0; }
+    .cart-text-details { display: flex; flex-direction: column; min-width: 0; }
+    .cart-actions { display: flex; align-items: center; gap: 10px; margin-left: 15px; }
+    
+    .quantity-input { 
+        width: 45px; 
+        padding: 5px; 
+        border: 1px solid #ddd; 
+        border-radius: 4px; 
+        text-align: center; 
+        font-weight: 600;
+    }
+    .delete-btn { 
+        cursor: pointer; 
+        color: #999; 
+        font-weight: 800; 
+        padding: 5px; 
+        transition: color 0.2s;
+        font-size: 1.1em;
+    }
+    .delete-btn:hover { color: var(--color-danger); }
   </style>
 </head>
 <body>
@@ -166,8 +253,11 @@
         </div>
         <hr>
         <div class="header-with-search">
-            <h3>상품 (<span id="selected-brand-name">미선택</span>)</h3>
-            <input type="text" id="product-search-input" class="product-search-input" placeholder="상품명 검색" style="display:none;">
+            <h3><span id="selected-brand-name">브랜드 선택</span></h3>
+            <div id="product-search-container" class="product-search-container" style="display:none;">
+                <input type="text" id="product-search-input" class="product-search-input" placeholder="검색">
+                <button id="product-search-btn" class="small-search-btn">조회</button>
+            </div>
         </div>
         <div id="product-list">
             <div class="loader">브랜드를 선택하면 상품 목록이 표시됩니다.</div>
@@ -176,17 +266,14 @@
 
     <div id="col2" class="column">
         <div id="product-details-content" class="hidden">
-            <div id="product-image-container" style="display: flex; align-items: center; justify-content: center; position: relative; margin-bottom: 10px;">
-                <img id="product-image" src="" alt="상품 이미지" style="width: 100px; height: auto; border-radius: 4px; border: 1px solid var(--color-border-light);">
+            <div id="product-image-container" style="margin-bottom: 20px;">
+                <img id="product-image" src="" alt="상품 이미지" style="width: 75% !important; height: auto !important; object-fit: cover; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); display: block; margin: 0 auto;">
             </div>
             <div class="info-header">
                 <span id="product-location" class="info-location"></span>
                 <span id="product-name" class="info-name"></span>
             </div>
             <div id="inventory-matrix-container"></div>
-            <div id="note-wrapper" class="note-container">
-                <input type="text" id="product-note" class="note-input" placeholder="">
-            </div>
             <div class="bottom-grids">
                 <div id="outfit-section" class="grid-section">
                     <div class="grid-header">
@@ -196,7 +283,9 @@
                     <div id="outfit-list"></div>
                 </div>
                 <div id="rental-history-section" class="grid-section">
-                    <h4>반출 내역 리스트 (대여중)</h4>
+                    <div class="grid-header">
+                        <h4>반출 내역 리스트 (대여중)</h4>
+                    </div>
                     <div id="rental-history-list"></div>
                 </div>
             </div>
@@ -207,10 +296,12 @@
     </div>
 
     <div id="col3" class="column">
-        <h2>대여 및 반납</h2>
-        <div class="toggle-buttons">
-            <button id="toggle-rental" class="active">대여</button>
-            <button id="toggle-return">반납</button>
+        <div class="sticky-header">
+            <h2>대여 및 반납</h2>
+            <div class="toggle-buttons">
+                <button id="toggle-rental" class="active">대여</button>
+                <button id="toggle-return">반납</button>
+            </div>
         </div>
 
         <div id="rental-checkout" class="rental-checkout">
@@ -231,21 +322,24 @@
 
         <div id="return-checkout" class="return-checkout hidden">
             <h3 class="section-header-with-line">반납 내역 조회</h3>
-            <div class="search-section">
-                <div class="search-input-wrapper">
-                    <input type="text" id="unified-search-input" class="unified-search-input" placeholder="브랜드 또는 대여자 이름 검색 (초성 가능)">
-                    <div id="search-suggestions" class="suggestions-box"></div>
+            <div class="return-search-bar">
+                <div class="return-search-input-group">
+                    <div class="search-input-wrapper">
+                        <input type="text" id="unified-search-input" class="unified-search-input" placeholder="브랜드/대여자 검색">
+                        <div id="search-suggestions" class="suggestions-box"></div>
+                    </div>
+                    <button id="search-execute-btn" class="search-execute-btn">조회</button>
                 </div>
-                <button id="search-execute-btn" class="search-execute-btn">조회</button>
+                <label class="select-all-wrapper">
+                    <input type="checkbox" id="select-all-return-chk" class="select-all-checkbox">
+                    전체 선택 <span id="return-list-count"></span>
+                </label>
             </div>
              <div id="return-list-container">
-                 <button id="select-all-return" class="select-all-btn">전체 선택</button>
                  <div class="return-list-header">
                      <div class="col-chk">선택</div>
                      <div class="col-renter">대여자</div>
-                     <div class="col-name">상품명</div>
-                     <div class="col-info">사이즈</div>
-                     <div class="col-info">색상</div>
+                     <div class="col-main">상품 정보</div>
                      <div class="col-qty">수량</div>
                      <div class="col-date">대여일</div>
                  </div>
@@ -309,15 +403,49 @@
     });
 
     function initializeApp() {
-        showLoader('brand-list', '모든 데이터를 로딩 중...');
+        // [수정] 로컬 스토리지에서 이전 데이터 먼저 불러오기 (초고속 초기 렌더링)
+        const cachedData = localStorage.getItem('inventory_app_data');
+        if (cachedData) {
+            try {
+                appData = JSON.parse(cachedData);
+                if (appData && appData.brands) {
+                    renderBrandList();
+                    console.log('캐시된 데이터를 사용하여 즉시 렌더링함');
+                }
+            } catch (e) {
+                localStorage.removeItem('inventory_app_data');
+            }
+        }
+
+        // 백그라운드에서 최신 데이터 가져오기
+        if (!appData) showLoader('brand-list', '데이터 동기화 중...');
+        
         callBackend('loadAllData')
             .then(function(data) {
+                // 데이터가 비었거나 에러인 경우 체크
+                if (!data || !data.brands) {
+                    console.warn('받아온 데이터가 비어있습니다.');
+                    return;
+                }
+
                 appData = data;
                 if (!appData.notes) appData.notes = {};
+                
+                // 최신 데이터로 로컬 스토리지 업데이트
+                localStorage.setItem('inventory_app_data', JSON.stringify(data));
+                
+                // 현재 브랜드 선택 여부에 따라 렌더링 결정 (사용자 방해 최소화)
                 renderBrandList();
+                if (currentBrand) {
+                    renderProductList(currentBrand);
+                }
+                
+                console.log('백엔드 정밀 동기화 완료');
             })
             .catch(function(error) {
-                alert('데이터 로드 오류: ' + error);
+                console.error('데이터 로드 오류:', error);
+                // 캐시조차 없는 경우에만 경고
+                if (!appData) alert('데이터를 불러오지 못했습니다. 네트워크를 확인해주세요.');
             });
     }
 
@@ -325,16 +453,29 @@
     const API_URL = "https://script.google.com/macros/s/AKfycbwUhg-Wra36tHNgQ9Ql8BPSMj8LfEF8n-cww7WpoNtujVI3hWb0un9iWx3JhLvMaEM5/exec";
 
     function callBackend(funcName) {
+        console.log('Back-end Request:', funcName);
         var args = Array.prototype.slice.call(arguments, 1);
         return fetch(API_URL, {
-        return fetch(API_URL, {
             method: 'POST',
+            mode: 'cors',
+            redirect: 'follow', // Required for GAS
+            headers: {
+                'Content-Type': 'text/plain' // Avoids CORS preflight (OPTIONS)
+            },
             body: JSON.stringify({ "function": funcName, "arguments": args })
         })
-        .then(function(response) { return response.json(); })
+        .then(function(response) { 
+            if (!response.ok) throw new Error('HTTP error! status: ' + response.status);
+            return response.json(); 
+        })
         .then(function(result) {
-            if(result.status === 'error') throw new Error(result.message);
-            return result.data;
+            console.log('Back-end Response:', result);
+            if(result && result.success === false) throw new Error(result.message || '실패');
+            return result; 
+        })
+        .catch(function(err) {
+            console.error('API Call Failed:', err);
+            throw err;
         });
     }
 
@@ -356,10 +497,12 @@
         if(document.getElementById('deselect-all-rental')) document.getElementById('deselect-all-rental').onclick = function() { toggleAllCartItems(false); };
 
         if(document.getElementById('process-return-btn')) document.getElementById('process-return-btn').onclick = processReturnCheckout;
-        if(document.getElementById('select-all-return')) document.getElementById('select-all-return').onclick = function() { toggleAllReturnItems(true); };
+        if(document.getElementById('select-all-return-chk')) {
+            document.getElementById('select-all-return-chk').onclick = function(e) { 
+                toggleAllReturnItems(e.target.checked); 
+            };
+        }
 
-        var noteInput = document.getElementById('product-note');
-        if(noteInput) noteInput.addEventListener('change', handleNoteSave);
 
         var searchInput = document.getElementById('unified-search-input');
         if(searchInput) {
@@ -377,7 +520,12 @@
         
         // 상품 검색 리스너
         var prodSearch = document.getElementById('product-search-input');
-        if(prodSearch) prodSearch.addEventListener('input', function(e) { renderProductList(null, e.target.value); });
+        var prodSearchBtn = document.getElementById('product-search-btn');
+        if(prodSearch) {
+            prodSearch.addEventListener('input', function(e) { renderProductList(null, e.target.value); });
+            prodSearch.addEventListener('keydown', function(e) { if (e.key === 'Enter') renderProductList(null, prodSearch.value); });
+        }
+        if(prodSearchBtn) prodSearchBtn.onclick = function() { renderProductList(null, prodSearch.value); };
     }
 
     function renderBrandList() {
@@ -403,15 +551,25 @@
         currentBrand = brandName;
         document.getElementById('selected-brand-name').textContent = brandName;
         
+        var searchContainer = document.getElementById('product-search-container');
+        if (searchContainer) searchContainer.style.display = 'flex';
         var searchInput = document.getElementById('product-search-input');
-        searchInput.style.display = 'block';
-        searchInput.value = ''; // 브랜드 변경 시 검색 초기화
+        if (searchInput) searchInput.value = ''; // 브랜드 변경 시 검색 초기화
         
         renderProductList(brandName);
     }
 
     function renderProductList(brandName, filterKeyword) {
         var targetBrand = brandName || currentBrand;
+        
+        var searchContainer = document.getElementById('product-search-container');
+        if (targetBrand) {
+            if (searchContainer) searchContainer.style.display = 'flex';
+            document.getElementById('selected-brand-name').textContent = targetBrand;
+        } else if (filterKeyword) {
+            if (searchContainer) searchContainer.style.display = 'flex';
+            document.getElementById('selected-brand-name').textContent = '검색 결과';
+        }
         if (!targetBrand) return;
 
         var div = document.getElementById('product-list');
@@ -515,8 +673,6 @@
         document.getElementById('product-details-content').classList.remove('hidden');
         
         var inventoryData = appData.rawData.filter(function(item) { return item.productCode === productCode && item.quantity > 0; });
-        var noteInput = document.getElementById('product-note');
-        noteInput.value = (appData.notes && appData.notes[productCode]) ? appData.notes[productCode] : '';
 
         // --- 이미지 표시 로직 수정 (Base64 로딩 적용) ---
         var singleImg = document.getElementById('product-image');
@@ -576,14 +732,6 @@
         renderRentalHistory(productCode);
     }
 
-    function handleNoteSave() {
-        if (!currentProductCode) return;
-        var noteContent = document.getElementById('product-note').value.trim();
-        if (!appData.notes) appData.notes = {};
-        appData.notes[currentProductCode] = noteContent;
-        callBackend('saveProductNote', currentProductCode, noteContent)
-            .catch(function() { showToast('저장 오류'); });
-    }
 
     function renderInventoryMatrix(inventoryData, productName) {
         var container = document.getElementById('inventory-matrix-container');
@@ -772,17 +920,39 @@
             var cartItem = document.createElement('div');
             cartItem.className = 'cart-item';
             
+            // 1. 정보 영역 (체크박스 + 텍스트)
+            var infoWrapper = document.createElement('div');
+            infoWrapper.className = 'cart-info-wrapper';
+
             var checkbox = document.createElement('input');
             checkbox.type = 'checkbox';
             checkbox.checked = item.checked;
+            checkbox.style.marginRight = '12px';
             checkbox.onchange = function(e) { item.checked = e.target.checked; };
             
-            var infoDiv = document.createElement('div');
-            infoDiv.className = 'cart-info';
-            infoDiv.innerHTML = '<span style="font-weight:bold;">' + item.productName + '</span><span style="color:#ccc; margin:0 2px;">/</span><span>' + item.size + '</span><span style="color:#ccc; margin:0 2px;">/</span><span>' + item.color + '</span><span style="color: #666; margin-left: 5px;">(재고: ' + item.maxQty + ')</span>';
+            var textDetails = document.createElement('div');
+            textDetails.className = 'cart-text-details';
 
+            var nameDiv = document.createElement('div');
+            nameDiv.style.fontWeight = '700';
+            nameDiv.style.color = '#333';
+            nameDiv.textContent = item.productName;
+
+            var subDiv = document.createElement('div');
+            subDiv.style.fontSize = '0.82em';
+            subDiv.style.color = '#777';
+            subDiv.style.marginTop = '2px';
+            subDiv.textContent = item.size + ' / ' + item.color + ' (재고: ' + item.maxQty + ')';
+
+            textDetails.appendChild(nameDiv);
+            textDetails.appendChild(subDiv);
+            infoWrapper.appendChild(checkbox);
+            infoWrapper.appendChild(textDetails);
+
+            // 2. 액션 영역 (수량 + 삭제)
             var actionsDiv = document.createElement('div');
             actionsDiv.className = 'cart-actions';
+
             var qtyInput = document.createElement('input');
             qtyInput.type = 'number';
             qtyInput.className = 'quantity-input';
@@ -793,18 +963,17 @@
                 if (newQty > item.maxQty) newQty = item.maxQty;
                 item.quantity = newQty; e.target.value = newQty;
             };
+
             var deleteBtn = document.createElement('span');
             deleteBtn.className = 'delete-btn';
-            deleteBtn.textContent = 'X';
+            deleteBtn.textContent = '✕';
             deleteBtn.onclick = function() { rentalCart.splice(index, 1); renderCart(); };
 
-            actionsDiv.appendChild(qtyInput); actionsDiv.appendChild(deleteBtn);
+            actionsDiv.appendChild(qtyInput); 
+            actionsDiv.appendChild(deleteBtn);
             
-            // 체크박스를 infoDiv의 첫 번째 자식으로 삽입 (상품명 바로 옆)
-            checkbox.style.marginRight = '8px';
-            infoDiv.insertBefore(checkbox, infoDiv.firstChild);
-            
-            cartItem.appendChild(infoDiv); cartItem.appendChild(actionsDiv);
+            cartItem.appendChild(infoWrapper); 
+            cartItem.appendChild(actionsDiv);
             fragment.appendChild(cartItem);
         });
         div.appendChild(fragment);
@@ -870,7 +1039,7 @@
             allMatches.forEach(function(match) {
                 var itemDiv = document.createElement('div');
                 itemDiv.className = 'suggestion-item';
-                itemDiv.innerHTML = '<span class="badge ' + match.type + '">' + (match.type==='brand'?'브랜드':'대여자') + '</span><span class="suggestion-text">' + match.text + '</span>';
+                itemDiv.innerHTML = '<span class="suggestion-text">' + match.text + '</span>';
                 itemDiv.onclick = function() {
                     document.getElementById('unified-search-input').value = match.text;
                     suggestionsBox.classList.remove('visible');
@@ -896,6 +1065,13 @@
     
     function renderReturnList(items) {
         currentReturnItems = items.map(function(item) { item.checked = false; return item; });
+        
+        // 검색 결과 개수 및 체크박스 상태 업데이트
+        var countSpan = document.getElementById('return-list-count');
+        if (countSpan) countSpan.textContent = items.length ? '(' + items.length + ')' : '';
+        var selectAllChk = document.getElementById('select-all-return-chk');
+        if (selectAllChk) selectAllChk.checked = false;
+
         var div = document.getElementById('return-list');
         div.innerHTML = '';
         if (!items.length) { div.innerHTML = '<div class="loader">결과 없음</div>'; return; }
@@ -911,17 +1087,18 @@
             
             var checkboxCol = document.createElement('div'); checkboxCol.className = 'col-chk'; checkboxCol.appendChild(checkbox);
             var renterCol = document.createElement('div'); renterCol.className = 'col-renter'; renterCol.textContent = item.renter;
-            var nameCol = document.createElement('div'); nameCol.className = 'col-name'; nameCol.textContent = item.productName;
-            var sizeCol = document.createElement('div'); sizeCol.className = 'col-info'; sizeCol.textContent = item.size;
-            var colorCol = document.createElement('div'); colorCol.className = 'col-info'; colorCol.textContent = item.color;
+            
+            var mainCol = document.createElement('div'); mainCol.className = 'col-main';
+            var titleDiv = document.createElement('div'); titleDiv.className = 'prod-title'; titleDiv.textContent = item.productName;
+            var subDiv = document.createElement('div'); subDiv.className = 'prod-sub'; subDiv.textContent = item.size + ' / ' + item.color;
+            mainCol.appendChild(titleDiv); mainCol.appendChild(subDiv);
+
             var qtyCol = document.createElement('div'); qtyCol.className = 'col-qty'; qtyCol.textContent = Math.abs(item.quantity);
             var dateCol = document.createElement('div'); dateCol.className = 'col-date'; dateCol.textContent = (item.rentalDate || '').split(' ')[0];
 
             itemDiv.appendChild(checkboxCol);
             itemDiv.appendChild(renterCol);
-            itemDiv.appendChild(nameCol);
-            itemDiv.appendChild(sizeCol);
-            itemDiv.appendChild(colorCol);
+            itemDiv.appendChild(mainCol);
             itemDiv.appendChild(qtyCol);
             itemDiv.appendChild(dateCol);
             fragment.appendChild(itemDiv);
