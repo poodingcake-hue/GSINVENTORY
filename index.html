@@ -1,1219 +1,1921 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-  <base target="_top">
-  <style>
-    @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css");
-    :root {
-        --color-accent: #6c757d;
-        --color-accent-dark: #495057;
-        --color-background: #fff;
-        --color-surface: #fff;
-        --color-text-primary: #333;
-        --color-text-secondary: #666;
-        --color-shadow: rgba(0, 0, 0, 0.08);
-        --font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
-        --color-border-light: #e0e0e0;
-        --color-danger: #dc3545;
-        --color-danger-dark: #c82333;
-        --font-size-base: 14px;
-        --font-size-sm: 13px;
-    }
+    <base target="_top">
+    <style>
+        @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css");
 
-    /* 전체 레이아웃 */
-    body { font-family: var(--font-family); margin: 0; padding: 0; background-color: var(--color-background); color: var(--color-text-primary); font-size: var(--font-size-base); }
-    .container { display: flex; width: 100%; height: 100vh; overflow: hidden; }
-    .column { padding: 20px; border-right: 1px solid var(--color-border-light); overflow-y: auto; background-color: var(--color-surface); box-sizing: border-box; display: flex; flex-direction: column; }
+        :root {
+            --color-accent: #6c757d;
+            --color-accent-dark: #495057;
+            --color-background: #fff;
+            --color-surface: #fff;
+            --color-text-primary: #333;
+            --color-text-secondary: #666;
+            --color-shadow: rgba(0, 0, 0, 0.08);
+            --font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+            --color-border-light: #e0e0e0;
+            --color-danger: #dc3545;
+            --color-danger-dark: #c82333;
+            --font-size-base: 14px;
+            --font-size-sm: 13px;
+        }
 
-    .column:nth-child(1) { flex: 0 0 25%; max-width: 25%; min-width: 280px; background-color: #fdfdfd; }
-    .column:nth-child(2) { flex: 0 0 45%; max-width: 45%; min-width: 500px; padding: 25px; }
-    .column:nth-child(3) { flex: 0 0 30%; max-width: 30%; min-width: 300px; border-right: none; background-color: #fafafa; }
+        /* 전체 레이아웃 */
+        body {
+            font-family: var(--font-family);
+            margin: 0;
+            padding: 0;
+            background-color: var(--color-background);
+            color: var(--color-text-primary);
+            font-size: var(--font-size-base);
+        }
 
-    /* 타이포그래피 */
-    h2 { font-size: 1.2rem; font-weight: 700; color: var(--color-text-primary); margin: 0 0 15px 0; padding-bottom: 10px; border-bottom: 2px solid #333; }
-    h3 { font-size: 1.1rem; font-weight: 600; color: var(--color-text-primary); margin: 20px 0 10px 0; }
-    h4 { font-size: 1rem; font-weight: 600; margin: 0; }
-    
-    .section-header-with-line { border-bottom: 1px solid var(--color-border-light); padding-bottom: 10px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: flex-end; }
-    hr { border: 0; height: 1px; background: var(--color-border-light); margin: 15px 0; }
+        .container {
+            display: flex;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+        }
 
-    /* 로더 및 유틸리티 */
-    .loader { text-align: center; padding: 30px; color: #999; font-size: 0.9em; }
-    .hidden { display: none !important; }
+        .column {
+            padding: 20px;
+            border-right: 1px solid var(--color-border-light);
+            overflow-y: auto;
+            background-color: var(--color-surface);
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+        }
 
-    /* 1열: 브랜드 그리드 */
-    .brand-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 20px; }
-    .brand-item { 
-        padding: 8px 4px; 
-        border: 1px solid #ddd; 
-        border-radius: 4px; 
-        cursor: pointer; 
-        background-color: #fff;
-        text-align: center; 
-        font-weight: 600; 
-        font-size: 12.5px; /* 6글자 수용을 위해 조정 */
-        color: #555;
-        transition: all 0.2s; 
-        box-shadow: 0 1px 2px rgba(0,0,0,0.03);
-        white-space: nowrap; 
-        overflow: hidden; 
-        text-overflow: ellipsis; 
-    }
-    .brand-item:hover { border-color: var(--color-accent); color: var(--color-accent); }
-    .brand-item.selected { background-color: var(--color-accent-dark); color: #fff; border-color: var(--color-accent-dark); box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        .column:nth-child(1) {
+            flex: 0 0 25%;
+            max-width: 25%;
+            min-width: 280px;
+            background-color: #fdfdfd;
+        }
 
-    /* 1열: 상품 목록 */
-    .product-item { padding: 10px 12px; border: 1px solid #e9ecef; border-radius: 4px; cursor: pointer; transition: all 0.15s; margin-bottom: 6px; background-color: #fff; display: flex; justify-content: space-between; align-items: center; }
-    .product-item:hover { border-color: #bbb; background-color: #f8f9fa; }
-    .product-item.selected { background-color: var(--color-accent); color: #fff; border-color: var(--color-accent); }
-    .product-item.selected .product-code { color: #f1f3f5; }
-    
-    .product-name { font-weight: 500; font-size: 0.95em; }
-    .product-code { font-size: 0.8em; color: #999; }
+        .column:nth-child(2) {
+            flex: 0 0 45%;
+            max-width: 45%;
+            min-width: 500px;
+            padding: 25px;
+        }
 
-    /* 2열: 상품 상세 */
-    .info-header { text-align: center; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #eee; position: relative; }
-    .info-location { position: absolute; left: 0; top: 0; font-weight: 700; color: var(--color-accent); font-size: 1.1em; }
-    .info-name { font-size: 1.5rem; font-weight: 800; color: #333; line-height: 1.3; margin-top: 5px; display: inline-block; }
-    
-    #product-image-container { margin-bottom: 20px; }
-    #product-image { width: 75% !important; height: auto !important; object-fit: cover; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); display: block; margin: 0 auto; }
+        .column:nth-child(3) {
+            flex: 0 0 30%;
+            max-width: 30%;
+            min-width: 300px;
+            border-right: none;
+            background-color: #fafafa;
+        }
 
-    /* 재고 테이블 - 가독성 개선 */
-    .inventory-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 0.95em; table-layout: fixed; }
-    .inventory-table th, .inventory-table td { border: 1px solid #e0e0e0; padding: 10px 5px; text-align: center; }
-    .inventory-table th { background-color: #f8f9fa; font-weight: 600; color: #555; border-bottom: 2px solid #ddd; }
-    .inventory-table td { color: #333; }
-    .inventory-cell { cursor: pointer; background-color: #fff; font-weight: 700; color: #333; transition: background-color 0.15s; }
-    .inventory-cell:hover { background-color: #f1f3f5; color: var(--color-accent-dark); }
-    
-    /* 노트 및 하단 그리드 */
-    .note-container { margin-bottom: 20px; }
-    .note-input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 0.95em; background: #fafafa; box-sizing: border-box; }
-    .note-input:focus { background: #fff; border-color: var(--color-accent); outline: none; }
+        /* 타이포그래피 */
+        h2 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--color-text-primary);
+            margin: 0 0 15px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #333;
+        }
 
-    .bottom-grids { display: flex; gap: 15px; margin-top: 10px; }
-    .grid-section { flex: 1; border: 1px solid #e0e0e0; padding: 15px; border-radius: 6px; background: #fff; }
-    .grid-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #eee; }
-    
-    .outfit-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
-    .outfit-item { border: 1px solid #eee; background-color: #fff; padding: 8px; border-radius: 4px; font-size: 0.9em; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-    .outfit-item:hover { border-color: #ccc; }
-    .outfit-host { font-weight: bold; margin-right: 8px; padding-right: 8px; border-right: 1px solid #eee; min-width: 40px; text-align: center; }
-    .outfit-size { color: var(--color-accent); }
+        h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin: 20px 0 10px 0;
+        }
 
-    /* 3열: 대여/반납 탭 및 액션 */
-    .toggle-buttons { display: flex; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border-radius: 6px; overflow: hidden; }
-    .toggle-buttons button { flex: 1; padding: 12px; border: 1px solid #ddd; background: #fff; color: #555; font-weight: 600; cursor: pointer; transition: all 0.2s; border-radius: 0; }
-    .toggle-buttons button:first-child { border-right: none; }
-    .toggle-buttons button.active { background: var(--color-accent-dark); color: #fff; border-color: var(--color-accent-dark); }
+        h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin: 0;
+        }
 
-    /* 장바구니 및 검색 결과 */
-    .control-buttons { display: flex; gap: 8px; margin-bottom: 10px; }
-    .select-all-btn { padding: 6px 12px; border: 1px solid #ced4da; background: #fff; border-radius: 4px; font-size: 0.85em; font-weight: 600; color: #555; cursor: pointer; }
-    .select-all-btn:hover { background: #f1f3f5; }
-    
-    .checkout-btn { width: 100%; padding: 14px; background-color: var(--color-accent-dark); color: white; border: none; border-radius: 6px; margin-top: 20px; cursor: pointer; font-size: 1rem; font-weight: 700; transition: background 0.2s; }
-    .checkout-btn:hover { background-color: #343a40; }
+        .section-header-with-line {
+            border-bottom: 1px solid var(--color-border-light);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
 
-    .col-chk { flex: 0 0 35px; border-right: 1px solid #eee; height: 100%; display: flex; align-items: center; justify-content: center; }
-    .col-renter { flex: 0 0 70px; font-weight: 600; color: #333; border-right: 1px solid #eee; height: 100%; display: flex; align-items: center; justify-content: center; }
-    .col-main { flex: 1; text-align: left; padding: 8px 12px; display: flex; flex-direction: column; justify-content: center; min-width: 0; }
-    .col-main .prod-title { font-weight: 700; color: #333; margin-bottom: 2px; white-space: normal; line-height: 1.2; word-break: keep-all; }
-    .col-main .prod-sub { font-size: 0.82em; color: #777; margin-top: 2px; }
-    .col-qty { flex: 0 0 45px; color: var(--color-danger); font-weight: 700; border-left: 1px solid #eee; height: 100%; display: flex; align-items: center; justify-content: center; }
-    .col-date { flex: 0 0 85px; color: #888; font-size: 0.78em; border-left: 1px solid #eee; height: 100%; display: flex; align-items: center; justify-content: center; }
+        hr {
+            border: 0;
+            height: 1px;
+            background: var(--color-border-light);
+            margin: 15px 0;
+        }
 
-    .return-list-header { display: flex; background-color: #f8f9fa; border-top: 1px solid #dee2e6; border-bottom: 2px solid #dee2e6; font-weight: 700; font-size: 0.85em; color: #495057; text-align: center; height: 40px; align-items: center; }
-    .return-item { display: flex; border-bottom: 1px solid #eee; font-size: 0.9em; height: 54px; align-items: center; transition: background 0.1s; background: #fff; }
-    .return-item:hover { background-color: #f1f3f5; }
+        /* 로더 및 유틸리티 */
+        .loader {
+            text-align: center;
+            padding: 30px;
+            color: #999;
+            font-size: 0.9em;
+        }
 
-    /* Modals & Toasts */
-    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; display: flex; justify-content: center; align-items: center; }
-    .modal { background: #fff; width: 90%; max-width: 500px; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); overflow: hidden; }
-    .modal-header { padding: 15px 20px; background: #f8f9fa; border-bottom: 1px solid #dee2e6; font-weight: bold; }
-    .modal-body { padding: 20px; }
-    .modal-footer { padding: 15px 20px; border-top: 1px solid #dee2e6; text-align: right; }
-    .modal-btn { padding: 8px 16px; border-radius: 4px; cursor: pointer; border: 1px solid transparent; font-weight: 500; }
-    .modal-btn.primary { background: var(--color-accent); color: #fff; }
-    .modal-btn.ghost { background: #fff; border-color: #ccc; color: #333; margin-right: 8px; }
+        .hidden {
+            display: none !important;
+        }
 
-    .toast-container { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 3000; }
-    .toast-message { background: rgba(33, 37, 41, 0.9); color: white; padding: 10px 25px; border-radius: 50px; margin-top: 10px; font-size: 0.9rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); animation: fadeInOut 2.5s forwards; }
-    @keyframes fadeInOut { 0% { opacity:0; transform:translateY(10px); } 15% { opacity:1; transform:translateY(0); } 85% { opacity:1; transform:translateY(0); } 100% { opacity:0; transform:translateY(-10px); } }
+        /* 1열: 브랜드 그리드 */
+        .brand-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            margin-bottom: 20px;
+        }
 
-    .suggestions-box { position: absolute; top: 100%; left: 0; right: 0; background: #fff; border: 1px solid #ddd; border-top: none; border-radius: 0 0 4px 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 1000; display: none; max-height: 250px; overflow-y: auto; }
-    .suggestions-box.visible { display: block; }
-    .suggestion-item { padding: 10px 15px; cursor: pointer; border-bottom: 1px solid #f8f9fa; display: flex; align-items: center; transition: background 0.1s; font-size: 0.9em; }
-    .suggestion-item:last-child { border-bottom: none; }
-    .suggestion-item:hover { background-color: #f1f3f5; }
-    .suggestion-text { font-weight: 500; color: #333; }
-    
-    /* 상품 검색 인풋 스타일 */
-    .header-with-search { display: flex; justify-content: space-between; align-items: center; margin: 20px 0 10px 0; border-bottom: 1px solid #eee; padding-bottom: 10px; }
-    .header-with-search h3 { margin: 0; font-size: 1.1rem; }
-    .product-search-container { display: flex; gap: 5px; align-items: center; }
-    .product-search-input { padding: 6px 10px; border: 1px solid #ced4da; border-radius: 4px; font-size: 0.9em; width: 100px; }
-    .small-search-btn { padding: 6px 10px; background: #6c757d; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85em; }
+        .brand-item {
+            padding: 8px 4px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            background-color: #fff;
+            text-align: center;
+            font-weight: 600;
+            font-size: 12.5px;
+            /* 6글자 수용을 위해 조정 */
+            color: #555;
+            transition: all 0.2s;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
 
-    /* 반출 내역 리스트 아이템 */
-    .rental-history-item { 
-        padding: 12px 0; 
-        font-size: 0.9em;
-    }
-    
-    /* 3열 반납 검색 레이아웃 개편 */
-    .return-search-bar { 
-        display: flex; 
-        align-items: center; 
-        gap: 8px; 
-        margin-bottom: 20px; 
-        background: #fff;
-        padding: 5px 0;
-    }
-    .return-search-input-group { flex: 1; display: flex; gap: 5px; min-width: 0; }
-    .unified-search-input { flex: 1; padding: 10px; border: 1px solid #ced4da; border-radius: 4px; min-width: 0; }
-    
-    .select-all-wrapper { 
-        display: flex; 
-        align-items: center; 
-        gap: 6px; 
-        cursor: pointer; 
-        white-space: nowrap; 
-        font-size: 0.9em; 
-        font-weight: 700;
-        color: #333;
-        padding-left: 5px;
-    }
-    .select-all-checkbox { 
-        width: 18px; 
-        height: 18px; 
-        cursor: pointer;
-        accent-color: var(--color-accent-dark);
-    }
+        .brand-item:hover {
+            border-color: var(--color-accent);
+            color: var(--color-accent);
+        }
 
-    ::-webkit-scrollbar { width: 8px; height: 8px; }
-    ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
-    ::-webkit-scrollbar-track { background: transparent; }
+        .brand-item.selected {
+            background-color: var(--color-accent-dark);
+            color: #fff;
+            border-color: var(--color-accent-dark);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
 
-    /* 3열 고정 헤더 영역 */
-    .sticky-header {
-        position: sticky;
-        top: -20px; /* column의 padding 20px 상쇄 */
-        background: var(--color-surface);
-        z-index: 100;
-        margin: -20px -20px 20px -20px;
-        padding: 20px 20px 10px 20px;
-        border-bottom: 1px solid var(--color-border-light);
-    }
+        /* 1열: 상품 목록 */
+        .product-item {
+            padding: 10px 12px;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.15s;
+            margin-bottom: 6px;
+            background-color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-    /* 장바구니 스타일 */
-    .cart-item { 
-        display: flex; 
-        align-items: center; 
-        justify-content: space-between; 
-        padding: 12px; 
-        border: 1px solid #eee; 
-        border-radius: 8px; 
-        margin-bottom: 8px; 
-        background: #fff;
-        transition: transform 0.1s;
-    }
-    .cart-item:hover { transform: translateY(-1px); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-    .cart-info-wrapper { display: flex; align-items: center; flex: 1; min-width: 0; }
-    .cart-text-details { display: flex; flex-direction: column; min-width: 0; }
-    .cart-actions { display: flex; align-items: center; gap: 10px; margin-left: 15px; }
-    
-    .quantity-input { 
-        width: 45px; 
-        padding: 5px; 
-        border: 1px solid #ddd; 
-        border-radius: 4px; 
-        text-align: center; 
-        font-weight: 600;
-    }
-    .delete-btn { 
-        cursor: pointer; 
-        color: #999; 
-        font-weight: 800; 
-        padding: 5px; 
-        transition: color 0.2s;
-        font-size: 1.1em;
-    }
-    .delete-btn:hover { color: var(--color-danger); }
-  </style>
+        .product-item:hover {
+            border-color: #bbb;
+            background-color: #f8f9fa;
+        }
+
+        .product-item.selected {
+            background-color: var(--color-accent);
+            color: #fff;
+            border-color: var(--color-accent);
+        }
+
+        .product-item.selected .product-code {
+            color: #f1f3f5;
+        }
+
+        .product-name {
+            font-weight: 500;
+            font-size: 0.95em;
+        }
+
+        .product-code {
+            font-size: 0.8em;
+            color: #999;
+        }
+
+        /* 2열: 상품 상세 */
+        .info-header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            position: relative;
+        }
+
+        .info-location {
+            position: absolute;
+            left: 0;
+            top: 0;
+            font-weight: 700;
+            color: var(--color-accent);
+            font-size: 1.1em;
+            cursor: pointer;
+            border-bottom: 1px dashed transparent;
+            transition: all 0.2s;
+        }
+
+        .info-location:hover {
+            border-bottom-color: var(--color-accent);
+            opacity: 0.8;
+        }
+
+        .info-name {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #333;
+            line-height: 1.3;
+            margin-top: 5px;
+            display: inline-block;
+        }
+
+        #product-image-container {
+            margin-bottom: 20px;
+        }
+
+        #product-image {
+            width: 75% !important;
+            height: auto !important;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            display: block;
+            margin: 0 auto;
+        }
+
+        /* 재고 테이블 - 가독성 개선 */
+        .inventory-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+            font-size: 0.95em;
+            table-layout: fixed;
+        }
+
+        .inventory-table th,
+        .inventory-table td {
+            border: 1px solid #e0e0e0;
+            padding: 10px 5px;
+            text-align: center;
+        }
+
+        .inventory-table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: #555;
+            border-bottom: 2px solid #ddd;
+        }
+
+        .inventory-table td {
+            color: #333;
+        }
+
+        .inventory-cell {
+            cursor: pointer;
+            background-color: #fff;
+            font-weight: 700;
+            color: #333;
+            transition: background-color 0.15s;
+        }
+
+        .inventory-cell:hover {
+            background-color: #f1f3f5;
+            color: var(--color-accent-dark);
+        }
+
+        /* 노트 및 하단 그리드 */
+        .note-container {
+            margin-bottom: 20px;
+        }
+
+        .note-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 0.95em;
+            background: #fafafa;
+            box-sizing: border-box;
+        }
+
+        .note-input:focus {
+            background: #fff;
+            border-color: var(--color-accent);
+            outline: none;
+        }
+
+        .bottom-grids {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .grid-section {
+            flex: 1;
+            border: 1px solid #e0e0e0;
+            padding: 15px;
+            border-radius: 6px;
+            background: #fff;
+        }
+
+        .grid-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .outfit-pair {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .outfit-item {
+            border: 1px solid #eee;
+            background-color: #fff;
+            padding: 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .outfit-item:hover {
+            border-color: #ccc;
+        }
+
+        .outfit-host {
+            font-weight: bold;
+            margin-right: 8px;
+            padding-right: 8px;
+            border-right: 1px solid #eee;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .outfit-size {
+            color: var(--color-accent);
+        }
+
+        /* 3열: 대여/반납 탭 및 액션 */
+        .toggle-buttons {
+            display: flex;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .toggle-buttons button {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #ddd;
+            background: #fff;
+            color: #555;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-radius: 0;
+        }
+
+        .toggle-buttons button:first-child {
+            border-right: none;
+        }
+
+        .toggle-buttons button.active {
+            background: var(--color-accent-dark);
+            color: #fff;
+            border-color: var(--color-accent-dark);
+        }
+
+        /* 장바구니 및 검색 결과 */
+        .control-buttons {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .select-all-btn {
+            padding: 6px 12px;
+            border: 1px solid #ced4da;
+            background: #fff;
+            border-radius: 4px;
+            font-size: 0.85em;
+            font-weight: 600;
+            color: #555;
+            cursor: pointer;
+        }
+
+        .select-all-btn:hover {
+            background: #f1f3f5;
+        }
+
+        .checkout-btn {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--color-accent-dark);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            margin-top: 20px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 700;
+            transition: background 0.2s;
+        }
+
+        .checkout-btn:hover {
+            background-color: #343a40;
+        }
+
+        .col-chk {
+            flex: 0 0 35px;
+            border-right: 1px solid #eee;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .col-renter {
+            flex: 0 0 70px;
+            font-weight: 600;
+            color: #333;
+            border-right: 1px solid #eee;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .col-main {
+            flex: 1;
+            text-align: left;
+            padding: 8px 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-width: 0;
+        }
+
+        .col-main .prod-title {
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 2px;
+            white-space: normal;
+            line-height: 1.2;
+            word-break: keep-all;
+        }
+
+        .col-main .prod-sub {
+            font-size: 0.82em;
+            color: #777;
+            margin-top: 2px;
+        }
+
+        .col-qty {
+            flex: 0 0 45px;
+            color: var(--color-danger);
+            font-weight: 700;
+            border-left: 1px solid #eee;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .col-date {
+            flex: 0 0 85px;
+            color: #888;
+            font-size: 0.78em;
+            border-left: 1px solid #eee;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .return-list-header {
+            display: flex;
+            background-color: #f8f9fa;
+            border-top: 1px solid #dee2e6;
+            border-bottom: 2px solid #dee2e6;
+            font-weight: 700;
+            font-size: 0.85em;
+            color: #495057;
+            text-align: center;
+            height: 40px;
+            align-items: center;
+        }
+
+        .return-item {
+            display: flex;
+            border-bottom: 1px solid #eee;
+            font-size: 0.9em;
+            height: 54px;
+            align-items: center;
+            transition: background 0.1s;
+            background: #fff;
+        }
+
+        .return-item:hover {
+            background-color: #f1f3f5;
+        }
+
+        /* Modals & Toasts */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal {
+            background: #fff;
+            width: 90%;
+            max-width: 500px;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .modal-header {
+            padding: 15px 20px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+            font-weight: bold;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-footer {
+            padding: 15px 20px;
+            border-top: 1px solid #dee2e6;
+            text-align: right;
+        }
+
+        .modal-btn {
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            border: 1px solid transparent;
+            font-weight: 500;
+        }
+
+        .modal-btn.primary {
+            background: var(--color-accent);
+            color: #fff;
+        }
+
+        .modal-btn.ghost {
+            background: #fff;
+            border-color: #ccc;
+            color: #333;
+            margin-right: 8px;
+        }
+
+        .toast-container {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 3000;
+        }
+
+        .toast-message {
+            background: rgba(33, 37, 41, 0.9);
+            color: white;
+            padding: 10px 25px;
+            border-radius: 50px;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            animation: fadeInOut 2.5s forwards;
+        }
+
+        @keyframes fadeInOut {
+            0% {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            15% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            85% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+        }
+
+        .suggestions-box {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-top: none;
+            border-radius: 0 0 4px 4px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            display: none;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        .suggestions-box.visible {
+            display: block;
+        }
+
+        .suggestion-item {
+            padding: 10px 15px;
+            cursor: pointer;
+            border-bottom: 1px solid #f8f9fa;
+            display: flex;
+            align-items: center;
+            transition: background 0.1s;
+            font-size: 0.9em;
+        }
+
+        .suggestion-item:last-child {
+            border-bottom: none;
+        }
+
+        .suggestion-item:hover {
+            background-color: #f1f3f5;
+        }
+
+        .suggestion-text {
+            font-weight: 500;
+            color: #333;
+        }
+
+        /* 상품 검색 인풋 스타일 */
+        .header-with-search {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 20px 0 10px 0;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .header-with-search h3 {
+            margin: 0;
+            font-size: 1.1rem;
+        }
+
+        .product-search-container {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+        }
+
+        .product-search-input {
+            padding: 6px 10px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 0.9em;
+            width: 100px;
+        }
+
+        .small-search-btn {
+            padding: 6px 10px;
+            background: #6c757d;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85em;
+        }
+
+        /* 반출 내역 리스트 아이템 */
+        .rental-history-item {
+            padding: 12px 0;
+            font-size: 0.9em;
+        }
+
+        /* 3열 반납 검색 레이아웃 개편 */
+        .return-search-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            background: #fff;
+            padding: 5px 0;
+        }
+
+        .return-search-input-group {
+            flex: 1;
+            display: flex;
+            gap: 5px;
+            min-width: 0;
+        }
+
+        .unified-search-input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            min-width: 0;
+        }
+
+        .select-all-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            white-space: nowrap;
+            font-size: 0.9em;
+            font-weight: 700;
+            color: #333;
+            padding-left: 5px;
+        }
+
+        .select-all-checkbox {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--color-accent-dark);
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        /* 3열 고정 헤더 영역 */
+        .sticky-header {
+            position: sticky;
+            top: -20px;
+            /* column의 padding 20px 상쇄 */
+            background: var(--color-surface);
+            z-index: 100;
+            margin: -20px -20px 20px -20px;
+            padding: 20px 20px 10px 20px;
+            border-bottom: 1px solid var(--color-border-light);
+        }
+
+        /* 장바구니 스타일 */
+        .cart-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            background: #fff;
+            transition: transform 0.1s;
+        }
+
+        .cart-item:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .cart-info-wrapper {
+            display: flex;
+            align-items: center;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .cart-text-details {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .cart-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-left: 15px;
+        }
+
+        .quantity-input {
+            width: 45px;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .delete-btn {
+            cursor: pointer;
+            color: #999;
+            font-weight: 800;
+            padding: 5px;
+            transition: color 0.2s;
+            font-size: 1.1em;
+        }
+
+        .delete-btn:hover {
+            color: var(--color-danger);
+        }
+    </style>
 </head>
+
 <body>
 
-<div class="container">
-    <div id="col1" class="column">
-        <h2>브랜드 및 상품 선택</h2>
-        <div id="brand-list" class="brand-grid">
-            <div class="loader">브랜드 목록 로딩 중...</div>
-        </div>
-        <hr>
-        <div class="header-with-search">
-            <h3><span id="selected-brand-name">브랜드 선택</span></h3>
-            <div id="product-search-container" class="product-search-container" style="display:none;">
-                <input type="text" id="product-search-input" class="product-search-input" placeholder="검색">
-                <button id="product-search-btn" class="small-search-btn">조회</button>
+    <div class="container">
+        <div id="col1" class="column">
+            <h2>브랜드 및 상품 선택</h2>
+            <div id="brand-list" class="brand-grid">
+                <div class="loader">브랜드 목록 로딩 중...</div>
+            </div>
+            <hr>
+            <div class="header-with-search">
+                <h3><span id="selected-brand-name">브랜드 선택</span></h3>
+                <div id="product-search-container" class="product-search-container" style="display:none;">
+                    <input type="text" id="product-search-input" class="product-search-input" placeholder="검색">
+                    <button id="product-search-btn" class="small-search-btn">조회</button>
+                </div>
+            </div>
+            <div id="product-list">
+                <div class="loader">브랜드를 선택하면 상품 목록이 표시됩니다.</div>
             </div>
         </div>
-        <div id="product-list">
-            <div class="loader">브랜드를 선택하면 상품 목록이 표시됩니다.</div>
-        </div>
-    </div>
 
-    <div id="col2" class="column">
-        <div id="product-details-content" class="hidden">
-            <div id="product-image-container" style="margin-bottom: 20px;">
-                <img id="product-image" src="" alt="상품 이미지" style="width: 75% !important; height: auto !important; object-fit: cover; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); display: block; margin: 0 auto;">
-            </div>
-            <div class="info-header">
-                <span id="product-location" class="info-location"></span>
-                <span id="product-name" class="info-name"></span>
-            </div>
-            <div id="inventory-matrix-container"></div>
-            <div class="bottom-grids">
-                <div id="outfit-section" class="grid-section">
-                    <div class="grid-header">
-                        <h4>착장 내역 조회 및 입력</h4>
-                        <button id="add-outfit-btn" class="edit-btn">➕ 입력</button>
+        <div id="col2" class="column">
+            <div id="product-details-content" class="hidden">
+                <div id="product-image-container" style="margin-bottom: 20px;">
+                    <img id="product-image" src="" alt="상품 이미지"
+                        style="width: 75% !important; height: auto !important; object-fit: cover; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); display: block; margin: 0 auto;">
+                </div>
+                <div class="info-header">
+                    <span id="product-location" class="info-location" title="클릭하여 위치 수정"></span>
+                    <span id="product-name" class="info-name"></span>
+                </div>
+                <div id="inventory-matrix-container"></div>
+                <div class="bottom-grids">
+                    <div id="outfit-section" class="grid-section">
+                        <div class="grid-header">
+                            <h4>착장 내역 조회 및 입력</h4>
+                            <button id="add-outfit-btn" class="edit-btn">➕ 입력</button>
+                        </div>
+                        <div id="outfit-list"></div>
                     </div>
-                    <div id="outfit-list"></div>
-                </div>
-                <div id="rental-history-section" class="grid-section">
-                    <div class="grid-header">
-                        <h4>반출 내역 리스트 (대여중)</h4>
+                    <div id="rental-history-section" class="grid-section">
+                        <div class="grid-header">
+                            <h4>반출 내역 리스트 (대여중)</h4>
+                        </div>
+                        <div id="rental-history-list"></div>
                     </div>
-                    <div id="rental-history-list"></div>
                 </div>
             </div>
-        </div>
-        <div id="col2-placeholder">
-            <div class="loader">상품을 선택하면 상세 재고 정보가 표시됩니다.</div>
-        </div>
-    </div>
-
-    <div id="col3" class="column">
-        <div class="sticky-header">
-            <h2>대여 및 반납</h2>
-            <div class="toggle-buttons">
-                <button id="toggle-rental" class="active">대여</button>
-                <button id="toggle-return">반납</button>
+            <div id="col2-placeholder">
+                <div class="loader">상품을 선택하면 상세 재고 정보가 표시됩니다.</div>
             </div>
         </div>
 
-        <div id="rental-checkout" class="rental-checkout">
-            <h3 class="section-header-with-line">대여 장바구니</h3>
-            <div class="control-buttons">
-                <button id="select-all-rental" class="select-all-btn">전체 선택</button>
-                <button id="deselect-all-rental" class="select-all-btn" style="background-color: #6c757d;">전체 해제</button>
+        <div id="col3" class="column">
+            <div class="sticky-header">
+                <h2>대여 및 반납</h2>
+                <div class="toggle-buttons">
+                    <button id="toggle-rental" class="active">대여</button>
+                    <button id="toggle-return">반납</button>
+                </div>
             </div>
-            <div id="cart-list">
-                <div class="loader">재고표에서 재고 수량을 클릭하여 상품을 담으세요.</div>
-            </div>
-            <div style="margin-top: 20px;">
-                <label for="renter-name">대여자 이름:</label>
-                <input type="text" id="renter-name" placeholder="이름을 입력하세요" style="width: 100%; padding: 8px; box-sizing: border-box; margin-top: 5px;">
-            </div>
-            <button id="process-rental-btn" class="checkout-btn">일괄 대여 완료</button>
-        </div>
 
-        <div id="return-checkout" class="return-checkout hidden">
-            <h3 class="section-header-with-line">반납 내역 조회</h3>
-            <div class="return-search-bar">
-                <div class="return-search-input-group">
-                    <div class="search-input-wrapper">
-                        <input type="text" id="unified-search-input" class="unified-search-input" placeholder="브랜드/대여자 검색">
-                        <div id="search-suggestions" class="suggestions-box"></div>
+            <div id="rental-checkout" class="rental-checkout">
+                <h3 class="section-header-with-line">대여 장바구니</h3>
+                <div class="control-buttons" style="margin-bottom: 15px;">
+                    <label class="select-all-wrapper">
+                        <input type="checkbox" id="select-all-rental-chk" class="select-all-checkbox" checked>
+                        전체 선택
+                    </label>
+                </div>
+                <div id="cart-list">
+                    <div class="loader">재고표에서 재고 수량을 클릭하여 상품을 담으세요.</div>
+                </div>
+                <div style="margin-top: 20px;">
+                    <label for="renter-name">대여자 이름:</label>
+                    <input type="text" id="renter-name" placeholder="이름을 입력하세요"
+                        style="width: 100%; padding: 8px; box-sizing: border-box; margin-top: 5px;">
+                </div>
+                <button id="process-rental-btn" class="checkout-btn">일괄 대여 완료</button>
+            </div>
+
+            <div id="return-checkout" class="return-checkout hidden">
+                <h3 class="section-header-with-line">반납 내역 조회</h3>
+                <div class="return-search-bar">
+                    <div class="return-search-input-group">
+                        <div class="search-input-wrapper">
+                            <input type="text" id="unified-search-input" class="unified-search-input"
+                                placeholder="브랜드/대여자 검색">
+                            <div id="search-suggestions" class="suggestions-box"></div>
+                        </div>
+                        <button id="search-execute-btn" class="search-execute-btn">조회</button>
                     </div>
-                    <button id="search-execute-btn" class="search-execute-btn">조회</button>
+                    <label class="select-all-wrapper">
+                        <input type="checkbox" id="select-all-return-chk" class="select-all-checkbox">
+                        전체 선택 <span id="return-list-count"></span>
+                    </label>
                 </div>
-                <label class="select-all-wrapper">
-                    <input type="checkbox" id="select-all-return-chk" class="select-all-checkbox">
-                    전체 선택 <span id="return-list-count"></span>
-                </label>
-            </div>
-             <div id="return-list-container">
-                 <div class="return-list-header">
-                     <div class="col-chk">선택</div>
-                     <div class="col-renter">대여자</div>
-                     <div class="col-main">상품 정보</div>
-                     <div class="col-qty">수량</div>
-                     <div class="col-date">대여일</div>
-                 </div>
-                 <div id="return-list">
-                    <div class="loader">브랜드 또는 대여자 이름을 검색하세요.</div>
+                <div id="return-list-container">
+                    <div class="return-list-header">
+                        <div class="col-chk">선택</div>
+                        <div class="col-renter">대여자</div>
+                        <div class="col-main">상품 정보</div>
+                        <div class="col-qty">수량</div>
+                        <div class="col-date">대여일</div>
+                    </div>
+                    <div id="return-list">
+                        <div class="loader">브랜드 또는 대여자 이름을 검색하세요.</div>
+                    </div>
                 </div>
+                <div style="margin-top: 20px;">
+                    <label for="returner-name">반납 처리자 이름:</label>
+                    <input type="text" id="returner-name" placeholder="처리자 이름"
+                        style="width: 100%; padding: 8px; box-sizing: border-box; margin-top: 5px;">
+                </div>
+                <button id="process-return-btn" class="checkout-btn">선택 상품 일괄 반납</button>
             </div>
-            <div style="margin-top: 20px;">
-                <label for="returner-name">반납 처리자 이름:</label>
-                <input type="text" id="returner-name" placeholder="처리자 이름" style="width: 100%; padding: 8px; box-sizing: border-box; margin-top: 5px;">
-            </div>
-            <button id="process-return-btn" class="checkout-btn">선택 상품 일괄 반납</button>
         </div>
     </div>
-</div>
 
-<div id="outfit-input-modal" class="modal-overlay hidden">
-    <div class="modal">
-        <div class="modal-header">
-            <h4>착장 내역 입력 (<span id="modal-product-name">상품명</span>)</h4>
-        </div>
-        <div class="modal-body">
-            <table class="outfit-input-table">
-                <thead><tr><th>No.</th><th>착장자 이름</th><th>사이즈</th></tr></thead>
-                <tbody>
-                    <tr><td>1</td><td><input type="text" class="host-name" data-row="1" placeholder="이름 (필수)"></td><td><input type="text" class="outfit-size" data-row="1" placeholder="사이즈 (필수)"></td></tr>
-                    <tr><td>2</td><td><input type="text" class="host-name" data-row="2" placeholder="이름"></td><td><input type="text" class="outfit-size" data-row="2" placeholder="사이즈"></td></tr>
-                    <tr><td>3</td><td><input type="text" class="host-name" data-row="3" placeholder="이름"></td><td><input type="text" class="outfit-size" data-row="3" placeholder="사이즈"></td></tr>
-                    <tr><td>4</td><td><input type="text" class="host-name" data-row="4" placeholder="이름"></td><td><input type="text" class="outfit-size" data-row="4" placeholder="사이즈"></td></tr>
-                </tbody>
-            </table>
-        </div>
-        <div class="modal-footer">
-            <button id="cancel-outfit-btn" class="modal-btn ghost">취소</button>
-            <button id="confirm-outfit-btn" class="modal-btn primary">확인 및 저장</button>
+    <div id="outfit-input-modal" class="modal-overlay hidden">
+        <div class="modal">
+            <div class="modal-header">
+                <h4>착장 내역 입력 (<span id="modal-product-name">상품명</span>)</h4>
+            </div>
+            <div class="modal-body">
+                <table class="outfit-input-table">
+                    <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th>착장자 이름</th>
+                            <th>사이즈</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td><input type="text" class="host-name" data-row="1" placeholder="이름 (필수)"></td>
+                            <td><input type="text" class="outfit-size" data-row="1" placeholder="사이즈 (필수)"></td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td><input type="text" class="host-name" data-row="2" placeholder="이름"></td>
+                            <td><input type="text" class="outfit-size" data-row="2" placeholder="사이즈"></td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td><input type="text" class="host-name" data-row="3" placeholder="이름"></td>
+                            <td><input type="text" class="outfit-size" data-row="3" placeholder="사이즈"></td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td><input type="text" class="host-name" data-row="4" placeholder="이름"></td>
+                            <td><input type="text" class="outfit-size" data-row="4" placeholder="사이즈"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button id="cancel-outfit-btn" class="modal-btn ghost">취소</button>
+                <button id="confirm-outfit-btn" class="modal-btn primary">확인 및 저장</button>
+            </div>
         </div>
     </div>
-</div>
 
-<div id="toast-container" class="toast-container"></div>
+    <div id="toast-container" class="toast-container"></div>
 
-<script>
-    let appData = null;
-    let currentBrand = null;
-    let currentProductCode = null;
-    let rentalCart = [];
-    let currentReturnItems = [];
-    
-    // 유의어 사전
-    const SYNONYMS = {
-        '아우터': ['자켓', '점퍼', '코트', '패딩', '가디건', '재킷'],
-        '상의': ['티셔츠', '셔츠', '블라우스', '니트', '맨투맨', '티', '탑', 'top'],
-        '하의': ['바지', '팬츠', '스커트', '치마', '슬랙스', '진', '데님'],
-        '원피스': ['드레스', '점프수트'],
-        '악세사리': ['모자', '가방', '벨트', '양말', '스카프', '목도리']
-    };
+    <script>
+        let appData = null;
+        let currentBrand = null;
+        let currentProductCode = null;
+        let rentalCart = [];
+        let currentReturnItems = [];
 
-    document.addEventListener('DOMContentLoaded', function() {
-        initializeApp();
-        setupEventListeners();
-    });
-
-    function initializeApp() {
-        // [수정] 로컬 스토리지에서 이전 데이터 먼저 불러오기 (초고속 초기 렌더링)
-        const cachedData = localStorage.getItem('inventory_app_data');
-        if (cachedData) {
-            try {
-                appData = JSON.parse(cachedData);
-                if (appData && appData.brands) {
-                    renderBrandList();
-                    console.log('캐시된 데이터를 사용하여 즉시 렌더링함');
-                }
-            } catch (e) {
-                localStorage.removeItem('inventory_app_data');
-            }
-        }
-
-        // 백그라운드에서 최신 데이터 가져오기
-        if (!appData) showLoader('brand-list', '데이터 동기화 중...');
-        
-        callBackend('loadAllData')
-            .then(function(data) {
-                // 데이터가 비었거나 에러인 경우 체크
-                if (!data || !data.brands) {
-                    console.warn('받아온 데이터가 비어있습니다.');
-                    return;
-                }
-
-                appData = data;
-                if (!appData.notes) appData.notes = {};
-                
-                // 최신 데이터로 로컬 스토리지 업데이트
-                localStorage.setItem('inventory_app_data', JSON.stringify(data));
-                
-                // 현재 브랜드 선택 여부에 따라 렌더링 결정 (사용자 방해 최소화)
-                renderBrandList();
-                if (currentBrand) {
-                    renderProductList(currentBrand);
-                }
-                
-                console.log('백엔드 정밀 동기화 완료');
-            })
-            .catch(function(error) {
-                console.error('데이터 로드 오류:', error);
-                // 캐시조차 없는 경우에만 경고
-                if (!appData) alert('데이터를 불러오지 못했습니다. 네트워크를 확인해주세요.');
-            });
-    }
-
-    // GAS Web App URL
-    const API_URL = "https://script.google.com/macros/s/AKfycbwUhg-Wra36tHNgQ9Ql8BPSMj8LfEF8n-cww7WpoNtujVI3hWb0un9iWx3JhLvMaEM5/exec";
-
-    function callBackend(funcName) {
-        console.log('Back-end Request:', funcName);
-        var args = Array.prototype.slice.call(arguments, 1);
-        return fetch(API_URL, {
-            method: 'POST',
-            mode: 'cors',
-            redirect: 'follow', // Required for GAS
-            headers: {
-                'Content-Type': 'text/plain' // Avoids CORS preflight (OPTIONS)
-            },
-            body: JSON.stringify({ "function": funcName, "arguments": args })
-        })
-        .then(function(response) { 
-            if (!response.ok) throw new Error('HTTP error! status: ' + response.status);
-            return response.json(); 
-        })
-        .then(function(result) {
-            console.log('Back-end Response:', result);
-            if(result && result.success === false) throw new Error(result.message || '실패');
-            return result; 
-        })
-        .catch(function(err) {
-            console.error('API Call Failed:', err);
-            throw err;
-        });
-    }
-
-    function showLoader(elementId, message) {
-        var element = document.getElementById(elementId);
-        if (element) element.innerHTML = '<div class="loader">' + (message || '로딩 중...') + '</div>';
-    }
-
-    function setupEventListeners() {
-        if(document.getElementById('toggle-rental')) document.getElementById('toggle-rental').onclick = function() { toggleCheckoutMode('rental'); };
-        if(document.getElementById('toggle-return')) document.getElementById('toggle-return').onclick = function() { toggleCheckoutMode('return'); };
-        
-        if(document.getElementById('add-outfit-btn')) document.getElementById('add-outfit-btn').onclick = showOutfitInputModal;
-        if(document.getElementById('cancel-outfit-btn')) document.getElementById('cancel-outfit-btn').onclick = closeOutfitInputModal;
-        if(document.getElementById('confirm-outfit-btn')) document.getElementById('confirm-outfit-btn').onclick = processOutfitInput;
-
-        if(document.getElementById('process-rental-btn')) document.getElementById('process-rental-btn').onclick = processRentalCheckout;
-        if(document.getElementById('select-all-rental')) document.getElementById('select-all-rental').onclick = function() { toggleAllCartItems(true); };
-        if(document.getElementById('deselect-all-rental')) document.getElementById('deselect-all-rental').onclick = function() { toggleAllCartItems(false); };
-
-        if(document.getElementById('process-return-btn')) document.getElementById('process-return-btn').onclick = processReturnCheckout;
-        if(document.getElementById('select-all-return-chk')) {
-            document.getElementById('select-all-return-chk').onclick = function(e) { 
-                toggleAllReturnItems(e.target.checked); 
-            };
-        }
-
-
-        var searchInput = document.getElementById('unified-search-input');
-        if(searchInput) {
-            searchInput.addEventListener('input', handleSearchInputSuggestions);
-            searchInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') executeSearch(); });
-        }
-        if(document.getElementById('search-execute-btn')) document.getElementById('search-execute-btn').onclick = executeSearch;
-        
-        document.addEventListener('click', function(e) {
-            var suggestionsBox = document.getElementById('search-suggestions');
-            if (suggestionsBox && e.target !== searchInput && e.target !== suggestionsBox) {
-                suggestionsBox.classList.remove('visible');
-            }
-        });
-        
-        // 상품 검색 리스너
-        var prodSearch = document.getElementById('product-search-input');
-        var prodSearchBtn = document.getElementById('product-search-btn');
-        if(prodSearch) {
-            prodSearch.addEventListener('input', function(e) { renderProductList(null, e.target.value); });
-            prodSearch.addEventListener('keydown', function(e) { if (e.key === 'Enter') renderProductList(null, prodSearch.value); });
-        }
-        if(prodSearchBtn) prodSearchBtn.onclick = function() { renderProductList(null, prodSearch.value); };
-    }
-
-    function renderBrandList() {
-        var div = document.getElementById('brand-list');
-        div.innerHTML = '';
-        if (!appData || !appData.brands || !appData.brands.length) { div.innerHTML = '<div class="loader">데이터 없음</div>'; return; }
-        var fragment = document.createDocumentFragment();
-        appData.brands.forEach(function(brand) {
-            var item = document.createElement('div');
-            item.className = 'brand-item';
-            item.textContent = brand;
-            item.onclick = function() { selectBrand(brand, item); };
-            fragment.appendChild(item);
-        });
-        div.appendChild(fragment);
-    }
-
-    function selectBrand(brandName, element) {
-        var items = document.querySelectorAll('.brand-item');
-        for (var i = 0; i < items.length; i++) { items[i].classList.remove('selected'); }
-        element.classList.add('selected');
-        
-        currentBrand = brandName;
-        document.getElementById('selected-brand-name').textContent = brandName;
-        
-        var searchContainer = document.getElementById('product-search-container');
-        if (searchContainer) searchContainer.style.display = 'flex';
-        var searchInput = document.getElementById('product-search-input');
-        if (searchInput) searchInput.value = ''; // 브랜드 변경 시 검색 초기화
-        
-        renderProductList(brandName);
-    }
-
-    function renderProductList(brandName, filterKeyword) {
-        var targetBrand = brandName || currentBrand;
-        
-        var searchContainer = document.getElementById('product-search-container');
-        if (targetBrand) {
-            if (searchContainer) searchContainer.style.display = 'flex';
-            document.getElementById('selected-brand-name').textContent = targetBrand;
-        } else if (filterKeyword) {
-            if (searchContainer) searchContainer.style.display = 'flex';
-            document.getElementById('selected-brand-name').textContent = '검색 결과';
-        }
-        if (!targetBrand) return;
-
-        var div = document.getElementById('product-list');
-        div.innerHTML = '';
-        if (!appData || !appData.rawData) { div.innerHTML = '<div class="loader">데이터 없음</div>'; return; }
-        
-        // 1. 브랜드로 1차 필터링
-        var brandProducts = appData.rawData.filter(function(item) { return item.productName.indexOf(targetBrand) !== -1; });
-        
-        // 2. 검색어로 2차 필터링 (유의어 포함)
-        if (filterKeyword) {
-            var keyword = filterKeyword.trim().toLowerCase();
-            if (keyword) {
-                 brandProducts = brandProducts.filter(function(item) {
-                     var name = item.productName.toLowerCase();
-                     var code = String(item.productCode).toLowerCase();
-                     
-                     // 기본 포함 여부
-                     if (name.includes(keyword) || code.includes(keyword)) return true;
-                     
-                     // 유의어 체크
-                     // 입력된 키워드가 유의어 키(Key)인 경우 -> 값(Value)들 중 하나라도 이름에 포함되면 OK
-                     if (SYNONYMS[keyword]) {
-                         return SYNONYMS[keyword].some(function(syn) { return name.includes(syn); });
-                     }
-                     // 입력된 키워드가 유의어 값(Value) 중 하나인 경우 -> 키(Key)가 이름에 포함되어도 OK (역방향은 선택사항, 여기선 생략하고 확장 검색만)
-                     // 혹은 키워드가 포함된 카테고리를 찾아서 그 카테고리의 모든 유의어를 검색
-                     for (var key in SYNONYMS) {
-                         if (SYNONYMS[key].includes(keyword) || key === keyword) {
-                             if (name.includes(key)) return true;
-                             if (SYNONYMS[key].some(function(syn) { return name.includes(syn); })) return true;
-                         }
-                     }
-                     return false;
-                 });
-            }
-        }
-
-        var uniqueProducts = {};
-        brandProducts.forEach(function(item) {
-            if (!uniqueProducts[item.productCode]) {
-                uniqueProducts[item.productCode] = { code: item.productCode, name: item.productName };
-            }
-        });
-        
-        var products = Object.keys(uniqueProducts).map(function(key) { return uniqueProducts[key]; });
-        products.sort(function(a, b) {
-            var codeA = parseInt(a.code.replace(/[^0-9]/g, '') || '0');
-            var codeB = parseInt(b.code.replace(/[^0-9]/g, '') || '0');
-            return codeB - codeA;
-        });
-
-        if (!products.length) { div.innerHTML = '<div class="loader">검색 결과 없음</div>'; return; }
-
-        var fragment = document.createDocumentFragment();
-        products.forEach(function(product) {
-            var item = document.createElement('div');
-            item.className = 'product-item';
-            if (currentProductCode === product.code) item.classList.add('selected');
-            
-            var nameSpan = document.createElement('span');
-            nameSpan.className = 'product-name';
-            nameSpan.textContent = product.name;
-            
-            var codeSpan = document.createElement('span');
-            codeSpan.className = 'product-code';
-            codeSpan.textContent = product.code;
-            
-            item.appendChild(nameSpan);
-            item.appendChild(codeSpan);
-            item.onclick = function() { selectProduct(product.code, item, product.name); };
-            fragment.appendChild(item);
-        });
-        div.appendChild(fragment);
-    }
-
-    function selectProduct(productCode, element, productName) {
-        if (currentProductCode === productCode) return;
-        currentProductCode = productCode;
-        var items = document.querySelectorAll('.product-item');
-        for (var i = 0; i < items.length; i++) { items[i].classList.remove('selected'); }
-        element.classList.add('selected');
-        renderProductDetails(productCode, productName);
-    }
-
-    function generateGsShopUrl(productCode) {
-        // 코드가 너무 짧으면 생성 불가
-        if (!productCode || productCode.length < 6) return null;
-        
-        // 문자열 파싱 (엑셀 수식: LEFT(2), MID(3,2), MID(5,2) 구현)
-        var p1 = productCode.substring(0, 2);
-        var p2 = productCode.substring(2, 4);
-        var p3 = productCode.substring(4, 6);
-        
-        // URL 조합
-        return 'https://image.gsshop.com/image/' + p1 + '/' + p2 + '/' + p3 + '/' + productCode + '_B1.jpg';
-    }
-
-    function renderProductDetails(productCode, productName) {
-        document.getElementById('col2-placeholder').classList.add('hidden');
-        document.getElementById('product-details-content').classList.remove('hidden');
-        
-        var inventoryData = appData.rawData.filter(function(item) { return item.productCode === productCode && item.quantity > 0; });
-
-        // --- 이미지 표시 로직 수정 (Base64 로딩 적용) ---
-        var singleImg = document.getElementById('product-image');
-        
-        // 시트에 저장된 URL 가져오기
-        var sheetImageUrl = appData.images[productCode];
-        // GS SHOP 자동 생성 URL (2순위)
-        var webImageUrl = generateGsShopUrl(productCode);
-
-        // 로딩 중 표시 (Placeholder)
-        singleImg.src = 'https://via.placeholder.com/250x250?text=Loading...';
-
-        if (sheetImageUrl && sheetImageUrl.indexOf('drive.google.com') !== -1) {
-             callBackend('getDriveImageBase64', sheetImageUrl)
-                .then(function(base64Data) {
-                    if (base64Data) {
-                        singleImg.src = base64Data;
-                    } else {
-                        singleImg.src = webImageUrl || 'https://via.placeholder.com/250x250?text=No+Image';
-                    }
-                })
-                .catch(function(e) {
-                    console.error("이미지 로드 실패: ", e);
-                    singleImg.src = webImageUrl || 'https://via.placeholder.com/250x250?text=Error';
-                });
-        } else if (sheetImageUrl) {
-            // 드라이브 링크가 아닌 다른 링크(직링크 등)라면 바로 넣음
-            singleImg.src = sheetImageUrl;
-        } else {
-            // 시트에 값이 없으면 웹 이미지 시도
-            singleImg.src = webImageUrl || 'https://via.placeholder.com/250x250?text=No+Image'; 
-        }
-
-        // 이미지 로드 에러 처리 (웹 이미지도 깨질 경우)
-        singleImg.onerror = function() {
-            if (this.src !== webImageUrl && webImageUrl) {
-                this.src = webImageUrl;
-            } else if (this.src.indexOf('via.placeholder') === -1) {
-                this.src = 'https://via.placeholder.com/250x250?text=No+Image';
-            }
+        // 유의어 사전
+        const SYNONYMS = {
+            '아우터': ['자켓', '점퍼', '코트', '패딩', '가디건', '재킷'],
+            '상의': ['티셔츠', '셔츠', '블라우스', '니트', '맨투맨', '티', '탑', 'top'],
+            '하의': ['바지', '팬츠', '스커트', '치마', '슬랙스', '진', '데님'],
+            '원피스': ['드레스', '점프수트'],
+            '악세사리': ['모자', '가방', '벨트', '양말', '스카프', '목도리']
         };
-        // ---------------------------
 
-        var location = inventoryData[0] ? inventoryData[0].location : 'N/A';
-        var displayName = (inventoryData[0] ? inventoryData[0].productName : productName);
-
-        document.getElementById('product-location').textContent = ' ' + location;
-        document.getElementById('product-name').textContent = displayName;
-        
-        if (inventoryData.length) {
-            renderInventoryMatrix(inventoryData, displayName);
-        } else {
-            document.getElementById('inventory-matrix-container').innerHTML = '<div class="loader">재고 없음</div>';
-        }
-
-        renderOutfits(productCode);
-        renderRentalHistory(productCode);
-    }
-
-
-    function renderInventoryMatrix(inventoryData, productName) {
-        var container = document.getElementById('inventory-matrix-container');
-        var colors = [];
-        var sizes = [];
-        
-        inventoryData.forEach(function(item) {
-            if (colors.indexOf(item.color) === -1) colors.push(item.color);
-            if (sizes.indexOf(item.size) === -1) sizes.push(item.size);
+        document.addEventListener('DOMContentLoaded', function () {
+            initializeApp();
+            setupEventListeners();
         });
-        colors.sort();
-        sizes = sortSizes(sizes);
 
-        if (!colors.length || !sizes.length) { container.innerHTML = '<div class="loader">정보 없음</div>'; return; }
-
-        var html = '<table class="inventory-table"><thead><tr><th>　</th>';
-        sizes.forEach(function(size) { html += '<th>' + size + '</th>'; });
-        html += '</tr></thead><tbody>';
-        
-        colors.forEach(function(color) {
-            html += '<tr><th>' + color + '</th>';
-            sizes.forEach(function(size) {
-                var totalQty = 0;
-                var skuCode = '';
-                inventoryData.forEach(function(item) {
-                    if(item.color === color && item.size === size) {
-                        totalQty += item.quantity;
-                        skuCode = item.skuCode;
+        function initializeApp() {
+            // [수정] 로컬 스토리지에서 이전 데이터 먼저 불러오기 (초고속 초기 렌더링)
+            const cachedData = localStorage.getItem('inventory_app_data');
+            if (cachedData) {
+                try {
+                    appData = JSON.parse(cachedData);
+                    if (appData && appData.brands) {
+                        renderBrandList();
+                        console.log('캐시된 데이터를 사용하여 즉시 렌더링함');
                     }
-                });
-                
-                if (totalQty > 0) {
-                    html += '<td class="inventory-cell" data-color="' + color + '" data-size="' + size + '" data-qty="' + totalQty + '" data-sku="' + skuCode + '" data-product-name="' + productName + '">' + totalQty + '</td>';
-                } else { 
-                    html += '<td></td>'; 
-                }
-            });
-            html += '</tr>';
-        });
-        html += '</tbody></table>';
-        container.innerHTML = html;
-        
-        var cells = document.querySelectorAll('.inventory-cell');
-        for (var i = 0; i < cells.length; i++) {
-            cells[i].onclick = handleInventoryCellClick;
-        }
-    }
-
-    function sortSizes(sizes) {
-        var sizeOrder = ['44', '55', '66', '77', '88', 'M55', 'M66', 'XS', 'S', 'M', 'L', 'XL', '2XL', 'XXL'];
-        return sizes.sort(function(a, b) {
-            var indexA = sizeOrder.indexOf(String(a).toUpperCase());
-            var indexB = sizeOrder.indexOf(String(b).toUpperCase());
-            if (indexA === -1 && indexB === -1) return String(a).localeCompare(String(b));
-            if (indexA === -1) return 1;
-            if (indexB === -1) return -1;
-            return indexA - indexB;
-        });
-    }
-
-    function handleInventoryCellClick(event) {
-        toggleCheckoutMode('rental');
-        var cell = event.currentTarget;
-        addToCart(currentProductCode, cell.dataset.productName, cell.dataset.color, cell.dataset.size, parseInt(cell.dataset.qty), cell.dataset.sku);
-    }
-
-    function renderOutfits(productCode) {
-        var div = document.getElementById('outfit-list');
-        div.innerHTML = '';
-        var outfits = appData.outfits.filter(function(item) { return item.productCode === productCode; });
-        if (!outfits.length) { div.innerHTML = '<div class="loader">내역 없음</div>'; return; }
-        
-        var fragment = document.createDocumentFragment();
-        for (var i = 0; i < outfits.length; i += 2) {
-            var pairDiv = document.createElement('div');
-            pairDiv.className = 'outfit-pair';
-            for (var j = 0; j < 2; j++) {
-                if (i + j < outfits.length) {
-                    var outfit = outfits[i + j];
-                    var itemDiv = document.createElement('div');
-                    itemDiv.className = 'outfit-item';
-                    itemDiv.dataset.hostName = outfit.hostName;
-                    itemDiv.dataset.size = outfit.size;
-                    itemDiv.dataset.productCode = productCode;
-                    itemDiv.innerHTML = '<span class="outfit-host">' + outfit.hostName + '</span><span class="outfit-size">' + outfit.size + '</span>';
-                    itemDiv.onclick = handleOutfitEdit;
-                    pairDiv.appendChild(itemDiv);
+                } catch (e) {
+                    localStorage.removeItem('inventory_app_data');
                 }
             }
-            fragment.appendChild(pairDiv);
-        }
-        div.appendChild(fragment);
-    }
 
-    function handleOutfitEdit(event) {
-        var item = event.currentTarget;
-        var productCode = item.dataset.productCode;
-        var hostName = item.dataset.hostName;
-        var oldSize = item.dataset.size;
-        var newSize = prompt('[' + hostName + '] 착장 사이즈 수정:', oldSize);
-        if (newSize && newSize !== oldSize && confirm('수정하시겠습니까?')) {
-            callBackend('updateOutfitSize', productCode, hostName, oldSize, newSize)
-                .then(function(result) {
-                    if (result.success) {
-                        showToast('수정 완료', true); 
-                        var outfit = appData.outfits.find(function(o) { return o.productCode === productCode && o.hostName === hostName && o.size === oldSize; });
-                        if (outfit) outfit.size = newSize;
-                        renderOutfits(productCode);
-                    } else { showToast('수정 실패'); }
+            // 백그라운드에서 최신 데이터 가져오기
+            if (!appData) showLoader('brand-list', '데이터 동기화 중...');
+
+            callBackend('loadAllData')
+                .then(function (data) {
+                    // 데이터가 비었거나 에러인 경우 체크
+                    if (!data || !data.brands) {
+                        console.warn('받아온 데이터가 비어있습니다.');
+                        return;
+                    }
+
+                    appData = data;
+                    if (!appData.notes) appData.notes = {};
+
+                    // 최신 데이터로 로컬 스토리지 업데이트
+                    localStorage.setItem('inventory_app_data', JSON.stringify(data));
+
+                    // 현재 브랜드 선택 여부에 따라 렌더링 결정 (사용자 방해 최소화)
+                    renderBrandList();
+                    if (currentBrand) {
+                        renderProductList(currentBrand);
+                    }
+
+                    console.log('백엔드 정밀 동기화 완료');
+                })
+                .catch(function (error) {
+                    console.error('데이터 로드 오류:', error);
+                    // 캐시조차 없는 경우에만 경고
+                    if (!appData) alert('데이터를 불러오지 못했습니다. 네트워크를 확인해주세요.');
                 });
         }
-    }
-    
-    function renderRentalHistory(productCode) {
-        var div = document.getElementById('rental-history-list');
-        div.innerHTML = '';
-        var history = appData.rentals.filter(function(item) { return item.productCode === productCode && item.status === '대여중'; });
-        if (!history.length) { div.innerHTML = '<div class="loader">대여중 내역 없음</div>'; return; }
-        
-        var fragment = document.createDocumentFragment();
-        history.forEach(function(item) {
-            var itemDiv = document.createElement('div');
-            itemDiv.className = 'rental-history-item';
-            itemDiv.innerHTML = '<div style="display: flex; justify-content: space-between;"><span style="font-weight: bold;">' + item.size + ' / ' + item.color + ' / ' + Math.abs(item.quantity) + 'EA</span><span style="color: #666;">' + item.renter + ' ' + (item.rentalDate.split(' ')[0] || '').substring(5) + '</span></div>';
-            fragment.appendChild(itemDiv);
-        });
-        div.appendChild(fragment);
-    }
 
-    function showOutfitInputModal() {
-        if (!currentProductCode) { showToast('상품 선택 필요'); return; }
-        document.getElementById('modal-product-name').textContent = document.getElementById('product-name').textContent;
-        document.getElementById('outfit-input-modal').classList.remove('hidden');
-        var inputs = document.querySelectorAll('.host-name, .outfit-size');
-        for (var i=0; i<inputs.length; i++) inputs[i].value = '';
-        document.getElementById('confirm-outfit-btn').disabled = false;
-        document.getElementById('confirm-outfit-btn').textContent = '확인 및 저장';
-    }
-    function closeOutfitInputModal() { document.getElementById('outfit-input-modal').classList.add('hidden'); }
-    
-    function processOutfitInput() {
-        var productCode = currentProductCode;
-        if (!productCode) return;
-        var inputs = [];
-        for (var i = 1; i <= 4; i++) {
-            var hostName = document.querySelector('.host-name[data-row="' + i + '"]').value.trim();
-            var size = document.querySelector('.outfit-size[data-row="' + i + '"]').value.trim();
-            if (hostName && size) inputs.push({ productCode: productCode, hostName: hostName, size: size });
-        }
-        if (inputs.length === 0) { showToast('데이터 없음'); return; }
-        document.getElementById('confirm-outfit-btn').textContent = '저장 중...';
-        document.getElementById('confirm-outfit-btn').disabled = true;
-        
-        callBackend('saveOutfitsBulk', inputs)
-            .then(function(result) {
-                if (result.success) {
-                    showToast(result.savedCount + '건 저장', true); 
-                    if (result.newOutfits) appData.outfits.push(...result.newOutfits);
-                    renderOutfits(productCode);
-                    closeOutfitInputModal();
-                } else { showToast('저장 실패'); }
+        // GAS Web App URL
+        const API_URL = "https://script.google.com/macros/s/AKfycbwUhg-Wra36tHNgQ9Ql8BPSMj8LfEF8n-cww7WpoNtujVI3hWb0un9iWx3JhLvMaEM5/exec";
+
+        function callBackend(funcName) {
+            console.log('Back-end Request:', funcName);
+            var args = Array.prototype.slice.call(arguments, 1);
+            return fetch(API_URL, {
+                method: 'POST',
+                mode: 'cors',
+                redirect: 'follow', // Required for GAS
+                headers: {
+                    'Content-Type': 'text/plain' // Avoids CORS preflight (OPTIONS)
+                },
+                body: JSON.stringify({ "function": funcName, "arguments": args })
             })
-            .catch(function() { showToast('통신 오류'); })
-            .finally(function() { document.getElementById('confirm-outfit-btn').disabled = false; });
-    }
-
-    function addToCart(productCode, productName, color, size, maxQty, skuCode) {
-        var existing = rentalCart.find(function(item) { return item.productCode === productCode && item.color === color && item.size === size; });
-        if (existing) {
-            if (existing.quantity < maxQty) { existing.quantity++; showToast('수량: ' + existing.quantity); }
-            else { showToast('재고 초과'); }
-        } else {
-            rentalCart.push({ productCode: productCode, productName: productName, color: color, size: size, skuCode: skuCode, quantity: 1, maxQty: maxQty, checked: true });
-            showToast('추가됨');
+                .then(function (response) {
+                    if (!response.ok) throw new Error('HTTP error! status: ' + response.status);
+                    return response.json();
+                })
+                .then(function (result) {
+                    console.log('Back-end Response:', result);
+                    if (result && result.success === false) throw new Error(result.message || '실패');
+                    return result;
+                })
+                .catch(function (err) {
+                    console.error('API Call Failed:', err);
+                    throw err;
+                });
         }
-        renderCart();
-    }
-    
-    function renderCart() {
-        var div = document.getElementById('cart-list');
-        div.innerHTML = '';
-        if (!rentalCart.length) { div.innerHTML = '<div class="loader">비어 있음</div>'; return; }
-        
-        var fragment = document.createDocumentFragment();
-        rentalCart.forEach(function(item, index) {
-            var cartItem = document.createElement('div');
-            cartItem.className = 'cart-item';
-            
-            // 1. 정보 영역 (체크박스 + 텍스트)
-            var infoWrapper = document.createElement('div');
-            infoWrapper.className = 'cart-info-wrapper';
 
-            var checkbox = document.createElement('input');
-            checkbox.type = 'checkbox';
-            checkbox.checked = item.checked;
-            checkbox.style.marginRight = '12px';
-            checkbox.onchange = function(e) { item.checked = e.target.checked; };
-            
-            var textDetails = document.createElement('div');
-            textDetails.className = 'cart-text-details';
-
-            var nameDiv = document.createElement('div');
-            nameDiv.style.fontWeight = '700';
-            nameDiv.style.color = '#333';
-            nameDiv.textContent = item.productName;
-
-            var subDiv = document.createElement('div');
-            subDiv.style.fontSize = '0.82em';
-            subDiv.style.color = '#777';
-            subDiv.style.marginTop = '2px';
-            subDiv.textContent = item.size + ' / ' + item.color + ' (재고: ' + item.maxQty + ')';
-
-            textDetails.appendChild(nameDiv);
-            textDetails.appendChild(subDiv);
-            infoWrapper.appendChild(checkbox);
-            infoWrapper.appendChild(textDetails);
-
-            // 2. 액션 영역 (수량 + 삭제)
-            var actionsDiv = document.createElement('div');
-            actionsDiv.className = 'cart-actions';
-
-            var qtyInput = document.createElement('input');
-            qtyInput.type = 'number';
-            qtyInput.className = 'quantity-input';
-            qtyInput.min = 1; qtyInput.max = item.maxQty; qtyInput.value = item.quantity;
-            qtyInput.onchange = function(e) {
-                var newQty = parseInt(e.target.value);
-                if (isNaN(newQty) || newQty < 1) newQty = 1;
-                if (newQty > item.maxQty) newQty = item.maxQty;
-                item.quantity = newQty; e.target.value = newQty;
-            };
-
-            var deleteBtn = document.createElement('span');
-            deleteBtn.className = 'delete-btn';
-            deleteBtn.textContent = '✕';
-            deleteBtn.onclick = function() { rentalCart.splice(index, 1); renderCart(); };
-
-            actionsDiv.appendChild(qtyInput); 
-            actionsDiv.appendChild(deleteBtn);
-            
-            cartItem.appendChild(infoWrapper); 
-            cartItem.appendChild(actionsDiv);
-            fragment.appendChild(cartItem);
-        });
-        div.appendChild(fragment);
-    }
-    function toggleAllCartItems(checked) { 
-        rentalCart.forEach(function(item) { item.checked = checked; }); 
-        renderCart(); 
-    }
-    
-    function processRentalCheckout() {
-        var renterName = document.getElementById('renter-name').value.trim();
-        if (!renterName) { showToast('이름 입력 필요'); return; }
-        var checkedItems = rentalCart.filter(function(item) { return item.checked && item.quantity > 0; });
-        if (!checkedItems.length) { showToast('상품 선택 필요'); return; }
-        if (!confirm(renterName + '님 대여 진행?')) return;
-        
-        callBackend('processRental', checkedItems, renterName)
-            .then(function(result) {
-                if (result.success) {
-                    showToast(result.message, true); 
-                    if (result.newRentals) result.newRentals.forEach(function(r) { appData.rentals.push(r); });
-                    rentalCart = rentalCart.filter(function(item) { return !item.checked; });
-                    renderCart();
-                    document.getElementById('renter-name').value = '';
-                    if (currentProductCode) renderProductDetails(currentProductCode, document.getElementById('product-name').textContent);
-                } else { showToast('실패: ' + result.message); }
-            });
-    }
-
-    function toggleCheckoutMode(mode) {
-        var rentalBtn = document.getElementById('toggle-rental');
-        var returnBtn = document.getElementById('toggle-return');
-        var rentalDiv = document.getElementById('rental-checkout');
-        var returnDiv = document.getElementById('return-checkout');
-        if (mode === 'rental') {
-            rentalBtn.classList.add('active'); returnBtn.classList.remove('active');
-            rentalDiv.classList.remove('hidden'); returnDiv.classList.add('hidden');
-        } else {
-            returnBtn.classList.add('active'); rentalBtn.classList.remove('active');
-            returnDiv.classList.remove('hidden'); rentalDiv.classList.add('hidden');
-            document.getElementById('unified-search-input').value = '';
-            document.getElementById('search-suggestions').classList.remove('visible');
-            renderReturnList([]); 
-            document.getElementById('return-list').innerHTML = '<div class="loader">검색하세요</div>';
+        function showLoader(elementId, message) {
+            var element = document.getElementById(elementId);
+            if (element) element.innerHTML = '<div class="loader">' + (message || '로딩 중...') + '</div>';
         }
-    }
 
-    function handleSearchInputSuggestions(e) {
-        var query = e.target.value.trim();
-        var suggestionsBox = document.getElementById('search-suggestions');
-        if (!query) { suggestionsBox.innerHTML = ''; suggestionsBox.classList.remove('visible'); return; }
+        function setupEventListeners() {
+            if (document.getElementById('toggle-rental')) document.getElementById('toggle-rental').onclick = function () { toggleCheckoutMode('rental'); };
+            if (document.getElementById('toggle-return')) document.getElementById('toggle-return').onclick = function () { toggleCheckoutMode('return'); };
 
-        var brandMatches = (appData.brands || []).filter(function(brand) { return brand.includes(query) || getChosung(brand).includes(query); }).map(function(brand) { return { type: 'brand', text: brand }; });
-        var uniqueRenters = [];
-        appData.rentals.filter(function(item) { return item.status === '대여중'; }).forEach(function(item) { if(item.renter && uniqueRenters.indexOf(item.renter) === -1) uniqueRenters.push(item.renter); });
-        
-        var renterMatches = uniqueRenters.filter(function(renter) { return renter.includes(query) || getChosung(renter).includes(query); }).map(function(renter) { return { type: 'renter', text: renter }; });
-        var allMatches = brandMatches.concat(renterMatches);
+            if (document.getElementById('add-outfit-btn')) document.getElementById('add-outfit-btn').onclick = showOutfitInputModal;
+            if (document.getElementById('cancel-outfit-btn')) document.getElementById('cancel-outfit-btn').onclick = closeOutfitInputModal;
+            if (document.getElementById('confirm-outfit-btn')) document.getElementById('confirm-outfit-btn').onclick = processOutfitInput;
 
-        if (allMatches.length > 0) {
-            suggestionsBox.innerHTML = '';
-            var fragment = document.createDocumentFragment();
-            allMatches.forEach(function(match) {
-                var itemDiv = document.createElement('div');
-                itemDiv.className = 'suggestion-item';
-                itemDiv.innerHTML = '<span class="suggestion-text">' + match.text + '</span>';
-                itemDiv.onclick = function() {
-                    document.getElementById('unified-search-input').value = match.text;
-                    suggestionsBox.classList.remove('visible');
+            if (document.getElementById('process-rental-btn')) document.getElementById('process-rental-btn').onclick = processRentalCheckout;
+            if (document.getElementById('select-all-rental-chk')) {
+                document.getElementById('select-all-rental-chk').onclick = function (e) {
+                    toggleAllCartItems(e.target.checked);
                 };
+            }
+
+            if (document.getElementById('process-return-btn')) document.getElementById('process-return-btn').onclick = processReturnCheckout;
+            if (document.getElementById('select-all-return-chk')) {
+                document.getElementById('select-all-return-chk').onclick = function (e) {
+                    toggleAllReturnItems(e.target.checked);
+                };
+            }
+
+
+            var searchInput = document.getElementById('unified-search-input');
+            if (searchInput) {
+                searchInput.addEventListener('input', handleSearchInputSuggestions);
+                searchInput.addEventListener('keydown', function (e) { if (e.key === 'Enter') executeSearch(); });
+            }
+            if (document.getElementById('search-execute-btn')) document.getElementById('search-execute-btn').onclick = executeSearch;
+
+            document.addEventListener('click', function (e) {
+                var suggestionsBox = document.getElementById('search-suggestions');
+                if (suggestionsBox && e.target !== searchInput && e.target !== suggestionsBox) {
+                    suggestionsBox.classList.remove('visible');
+                }
+            });
+
+            // 상품 검색 리스너
+            var prodSearch = document.getElementById('product-search-input');
+            var prodSearchBtn = document.getElementById('product-search-btn');
+            if (prodSearch) {
+                prodSearch.addEventListener('input', function (e) { renderProductList(null, e.target.value); });
+                prodSearch.addEventListener('keydown', function (e) { if (e.key === 'Enter') renderProductList(null, prodSearch.value); });
+            }
+            if (prodSearchBtn) prodSearchBtn.onclick = function () { renderProductList(null, prodSearch.value); };
+        }
+
+        function renderBrandList() {
+            var div = document.getElementById('brand-list');
+            div.innerHTML = '';
+            if (!appData || !appData.brands || !appData.brands.length) { div.innerHTML = '<div class="loader">데이터 없음</div>'; return; }
+            var fragment = document.createDocumentFragment();
+            appData.brands.forEach(function (brand) {
+                var item = document.createElement('div');
+                item.className = 'brand-item';
+                item.textContent = brand;
+                item.onclick = function () { selectBrand(brand, item); };
+                fragment.appendChild(item);
+            });
+            div.appendChild(fragment);
+        }
+
+        function selectBrand(brandName, element) {
+            var items = document.querySelectorAll('.brand-item');
+            for (var i = 0; i < items.length; i++) { items[i].classList.remove('selected'); }
+            element.classList.add('selected');
+
+            currentBrand = brandName;
+            document.getElementById('selected-brand-name').textContent = brandName;
+
+            var searchContainer = document.getElementById('product-search-container');
+            if (searchContainer) searchContainer.style.display = 'flex';
+            var searchInput = document.getElementById('product-search-input');
+            if (searchInput) searchInput.value = ''; // 브랜드 변경 시 검색 초기화
+
+            renderProductList(brandName);
+        }
+
+        function renderProductList(brandName, filterKeyword) {
+            var targetBrand = brandName || currentBrand;
+
+            var searchContainer = document.getElementById('product-search-container');
+            if (targetBrand) {
+                if (searchContainer) searchContainer.style.display = 'flex';
+                document.getElementById('selected-brand-name').textContent = targetBrand;
+            } else if (filterKeyword) {
+                if (searchContainer) searchContainer.style.display = 'flex';
+                document.getElementById('selected-brand-name').textContent = '검색 결과';
+            }
+            if (!targetBrand) return;
+
+            var div = document.getElementById('product-list');
+            div.innerHTML = '';
+            if (!appData || !appData.rawData) { div.innerHTML = '<div class="loader">데이터 없음</div>'; return; }
+
+            // 1. 브랜드로 1차 필터링
+            var brandProducts = appData.rawData.filter(function (item) { return item.productName.indexOf(targetBrand) !== -1; });
+
+            // 2. 검색어로 2차 필터링 (유의어 포함)
+            if (filterKeyword) {
+                var keyword = filterKeyword.trim().toLowerCase();
+                if (keyword) {
+                    brandProducts = brandProducts.filter(function (item) {
+                        var name = item.productName.toLowerCase();
+                        var code = String(item.productCode).toLowerCase();
+
+                        // 기본 포함 여부
+                        if (name.includes(keyword) || code.includes(keyword)) return true;
+
+                        // 유의어 체크
+                        // 입력된 키워드가 유의어 키(Key)인 경우 -> 값(Value)들 중 하나라도 이름에 포함되면 OK
+                        if (SYNONYMS[keyword]) {
+                            return SYNONYMS[keyword].some(function (syn) { return name.includes(syn); });
+                        }
+                        // 입력된 키워드가 유의어 값(Value) 중 하나인 경우 -> 키(Key)가 이름에 포함되어도 OK (역방향은 선택사항, 여기선 생략하고 확장 검색만)
+                        // 혹은 키워드가 포함된 카테고리를 찾아서 그 카테고리의 모든 유의어를 검색
+                        for (var key in SYNONYMS) {
+                            if (SYNONYMS[key].includes(keyword) || key === keyword) {
+                                if (name.includes(key)) return true;
+                                if (SYNONYMS[key].some(function (syn) { return name.includes(syn); })) return true;
+                            }
+                        }
+                        return false;
+                    });
+                }
+            }
+
+            var uniqueProducts = {};
+            brandProducts.forEach(function (item) {
+                if (!uniqueProducts[item.productCode]) {
+                    uniqueProducts[item.productCode] = { code: item.productCode, name: item.productName };
+                }
+            });
+
+            var products = Object.keys(uniqueProducts).map(function (key) { return uniqueProducts[key]; });
+            products.sort(function (a, b) {
+                var codeA = parseInt(a.code.replace(/[^0-9]/g, '') || '0');
+                var codeB = parseInt(b.code.replace(/[^0-9]/g, '') || '0');
+                return codeB - codeA;
+            });
+
+            if (!products.length) { div.innerHTML = '<div class="loader">검색 결과 없음</div>'; return; }
+
+            var fragment = document.createDocumentFragment();
+            products.forEach(function (product) {
+                var item = document.createElement('div');
+                item.className = 'product-item';
+                if (currentProductCode === product.code) item.classList.add('selected');
+
+                var nameSpan = document.createElement('span');
+                nameSpan.className = 'product-name';
+                nameSpan.textContent = product.name;
+
+                var codeSpan = document.createElement('span');
+                codeSpan.className = 'product-code';
+                codeSpan.textContent = product.code;
+
+                item.appendChild(nameSpan);
+                item.appendChild(codeSpan);
+                item.onclick = function () { selectProduct(product.code, item, product.name); };
+                fragment.appendChild(item);
+            });
+            div.appendChild(fragment);
+        }
+
+        function selectProduct(productCode, element, productName) {
+            if (currentProductCode === productCode) return;
+            currentProductCode = productCode;
+            var items = document.querySelectorAll('.product-item');
+            for (var i = 0; i < items.length; i++) { items[i].classList.remove('selected'); }
+            element.classList.add('selected');
+            renderProductDetails(productCode, productName);
+        }
+
+        function editProductLocation() {
+            if (!currentProductCode) return;
+            var currentLocation = document.getElementById('product-location').textContent.trim();
+            var newLocation = prompt('새로운 위치를 입력하세요:', currentLocation);
+
+            if (newLocation !== null && newLocation !== currentLocation) {
+                showToast('위치 저장 중...');
+                callBackend('saveProductLocation', currentProductCode, newLocation)
+                    .then(function (result) {
+                        if (result.success) {
+                            showToast('위치 수정 완료', true);
+                            document.getElementById('product-location').textContent = ' ' + newLocation;
+
+                            // 로컬 데이터 업데이트
+                            if (appData && appData.rawData) {
+                                appData.rawData.forEach(function (item) {
+                                    if (item.productCode === currentProductCode) item.location = newLocation;
+                                });
+                                localStorage.setItem('inventory_app_data', JSON.stringify(appData));
+                            }
+                        } else {
+                            showToast('저장 실패');
+                        }
+                    })
+                    .catch(function (err) {
+                        showToast('오류 발생');
+                        console.error(err);
+                    });
+            }
+        }
+
+        function generateGsShopUrl(productCode) {
+            // 코드가 너무 짧으면 생성 불가
+            if (!productCode || productCode.length < 6) return null;
+
+            // 문자열 파싱 (엑셀 수식: LEFT(2), MID(3,2), MID(5,2) 구현)
+            var p1 = productCode.substring(0, 2);
+            var p2 = productCode.substring(2, 4);
+            var p3 = productCode.substring(4, 6);
+
+            // URL 조합
+            return 'https://image.gsshop.com/image/' + p1 + '/' + p2 + '/' + p3 + '/' + productCode + '_B1.jpg';
+        }
+
+        function renderProductDetails(productCode, productName) {
+            document.getElementById('col2-placeholder').classList.add('hidden');
+            document.getElementById('product-details-content').classList.remove('hidden');
+
+            var inventoryData = appData.rawData.filter(function (item) { return item.productCode === productCode && item.quantity > 0; });
+
+            // --- 이미지 표시 로직 (1순위: 시트 C열, 2순위: 웹 자동생성) ---
+            var singleImg = document.getElementById('product-image');
+            var sheetImageUrl = appData.images[productCode];
+            var webImageUrl = generateGsShopUrl(productCode);
+
+            console.log("Rendering Image for Product:", productCode);
+            console.log("Sheet Image URL (C column):", sheetImageUrl);
+            console.log("Web Image URL (GS SHOP):", webImageUrl);
+
+            // 초기 로딩 표시
+            singleImg.src = 'https://via.placeholder.com/250x250?text=Loading...';
+
+            if (sheetImageUrl) {
+                // 1순위: 시트에 이미지가 있는 경우
+                if (sheetImageUrl.indexOf('drive.google.com') !== -1) {
+                    console.log("Attempting to fetch Google Drive image via backend...");
+                    // 구글 드라이브 링크인 경우 Base64 변환 시도
+                    callBackend('getDriveImageBase64', sheetImageUrl)
+                        .then(function (result) {
+                            // Backend 결과가 객체인지 확인 (result.data 확인)
+                            var imageData = (result && typeof result === 'object' && result.data) ? result.data : result;
+
+                            if (imageData && typeof imageData === 'string' && imageData.startsWith('data:image')) {
+                                console.log("Google Drive image loaded successfully.");
+                                singleImg.src = imageData;
+                            } else {
+                                console.warn("Invalid image data received:", result);
+                                // 변환 실패 시 웹 이미지로 대체
+                                singleImg.src = webImageUrl || 'https://via.placeholder.com/250x250?text=No+Image';
+                            }
+                        })
+                        .catch(function (err) {
+                            console.error("Google Drive Image Backend Error:", err);
+                            singleImg.src = webImageUrl || 'https://via.placeholder.com/250x250?text=Error';
+                        });
+                } else {
+                    console.log("Using direct link from Sheet.");
+                    // 직링크 등 일반 URL인 경우 바로 적용
+                    singleImg.src = sheetImageUrl;
+                }
+            } else {
+                console.log("No image URL in Sheet. Using web image fallback.");
+                // 2순위: 시트에 이미지가 없는 경우 웹 이미지 시도
+                singleImg.src = webImageUrl || 'https://via.placeholder.com/250x250?text=No+Image';
+            }
+
+            // 이미지 로드 에러 발생 시 최종 Fallback
+            singleImg.onerror = function () {
+                console.error("Image failed to load:", this.src);
+                if (this.src !== webImageUrl && webImageUrl) {
+                    console.log("Falling back to web image after load error.");
+                    this.src = webImageUrl;
+                } else if (this.src.indexOf('via.placeholder') === -1) {
+                    this.src = 'https://via.placeholder.com/250x250?text=No+Image';
+                }
+            };
+            // ---------------------------
+
+            var location = inventoryData[0] ? inventoryData[0].location : 'N/A';
+            var displayName = (inventoryData[0] ? inventoryData[0].productName : productName);
+
+            document.getElementById('product-location').textContent = ' ' + location;
+            document.getElementById('product-location').onclick = editProductLocation;
+            document.getElementById('product-name').textContent = displayName;
+
+            if (inventoryData.length) {
+                renderInventoryMatrix(inventoryData, displayName);
+            } else {
+                document.getElementById('inventory-matrix-container').innerHTML = '<div class="loader">재고 없음</div>';
+            }
+
+            renderOutfits(productCode);
+            renderRentalHistory(productCode);
+        }
+
+
+        function renderInventoryMatrix(inventoryData, productName) {
+            var container = document.getElementById('inventory-matrix-container');
+            var colors = [];
+            var sizes = [];
+
+            inventoryData.forEach(function (item) {
+                if (colors.indexOf(item.color) === -1) colors.push(item.color);
+                if (sizes.indexOf(item.size) === -1) sizes.push(item.size);
+            });
+            colors.sort();
+            sizes = sortSizes(sizes);
+
+            if (!colors.length || !sizes.length) { container.innerHTML = '<div class="loader">정보 없음</div>'; return; }
+
+            var html = '<table class="inventory-table"><thead><tr><th>　</th>';
+            sizes.forEach(function (size) { html += '<th>' + size + '</th>'; });
+            html += '</tr></thead><tbody>';
+
+            colors.forEach(function (color) {
+                html += '<tr><th>' + color + '</th>';
+                sizes.forEach(function (size) {
+                    var totalQty = 0;
+                    var skuCode = '';
+                    inventoryData.forEach(function (item) {
+                        if (item.color === color && item.size === size) {
+                            totalQty += item.quantity;
+                            skuCode = item.skuCode;
+                        }
+                    });
+
+                    if (totalQty > 0) {
+                        html += '<td class="inventory-cell" data-color="' + color + '" data-size="' + size + '" data-qty="' + totalQty + '" data-sku="' + skuCode + '" data-product-name="' + productName + '">' + totalQty + '</td>';
+                    } else {
+                        html += '<td></td>';
+                    }
+                });
+                html += '</tr>';
+            });
+            html += '</tbody></table>';
+            container.innerHTML = html;
+
+            var cells = document.querySelectorAll('.inventory-cell');
+            for (var i = 0; i < cells.length; i++) {
+                cells[i].onclick = handleInventoryCellClick;
+            }
+        }
+
+        function sortSizes(sizes) {
+            var sizeOrder = ['44', '55', '66', '77', '88', 'M55', 'M66', 'XS', 'S', 'M', 'L', 'XL', '2XL', 'XXL'];
+            return sizes.sort(function (a, b) {
+                var indexA = sizeOrder.indexOf(String(a).toUpperCase());
+                var indexB = sizeOrder.indexOf(String(b).toUpperCase());
+                if (indexA === -1 && indexB === -1) return String(a).localeCompare(String(b));
+                if (indexA === -1) return 1;
+                if (indexB === -1) return -1;
+                return indexA - indexB;
+            });
+        }
+
+        function handleInventoryCellClick(event) {
+            toggleCheckoutMode('rental');
+            var cell = event.currentTarget;
+            addToCart(currentProductCode, cell.dataset.productName, cell.dataset.color, cell.dataset.size, parseInt(cell.dataset.qty), cell.dataset.sku);
+        }
+
+        function renderOutfits(productCode) {
+            var div = document.getElementById('outfit-list');
+            div.innerHTML = '';
+            var outfits = appData.outfits.filter(function (item) { return item.productCode === productCode; });
+            if (!outfits.length) { div.innerHTML = '<div class="loader">내역 없음</div>'; return; }
+
+            var fragment = document.createDocumentFragment();
+            for (var i = 0; i < outfits.length; i += 2) {
+                var pairDiv = document.createElement('div');
+                pairDiv.className = 'outfit-pair';
+                for (var j = 0; j < 2; j++) {
+                    if (i + j < outfits.length) {
+                        var outfit = outfits[i + j];
+                        var itemDiv = document.createElement('div');
+                        itemDiv.className = 'outfit-item';
+                        itemDiv.dataset.hostName = outfit.hostName;
+                        itemDiv.dataset.size = outfit.size;
+                        itemDiv.dataset.productCode = productCode;
+                        itemDiv.innerHTML = '<span class="outfit-host">' + outfit.hostName + '</span><span class="outfit-size">' + outfit.size + '</span>';
+                        itemDiv.onclick = handleOutfitEdit;
+                        pairDiv.appendChild(itemDiv);
+                    }
+                }
+                fragment.appendChild(pairDiv);
+            }
+            div.appendChild(fragment);
+        }
+
+        function handleOutfitEdit(event) {
+            var item = event.currentTarget;
+            var productCode = item.dataset.productCode;
+            var hostName = item.dataset.hostName;
+            var oldSize = item.dataset.size;
+            var newSize = prompt('[' + hostName + '] 착장 사이즈 수정:', oldSize);
+            if (newSize && newSize !== oldSize && confirm('수정하시겠습니까?')) {
+                callBackend('updateOutfitSize', productCode, hostName, oldSize, newSize)
+                    .then(function (result) {
+                        if (result.success) {
+                            showToast('수정 완료', true);
+                            var outfit = appData.outfits.find(function (o) { return o.productCode === productCode && o.hostName === hostName && o.size === oldSize; });
+                            if (outfit) outfit.size = newSize;
+                            renderOutfits(productCode);
+                        } else { showToast('수정 실패'); }
+                    });
+            }
+        }
+
+        function renderRentalHistory(productCode) {
+            var div = document.getElementById('rental-history-list');
+            div.innerHTML = '';
+            var history = appData.rentals.filter(function (item) { return item.productCode === productCode && item.status === '대여중'; });
+            if (!history.length) { div.innerHTML = '<div class="loader">대여중 내역 없음</div>'; return; }
+
+            var fragment = document.createDocumentFragment();
+            history.forEach(function (item) {
+                var itemDiv = document.createElement('div');
+                itemDiv.className = 'rental-history-item';
+                itemDiv.innerHTML = '<div style="display: flex; justify-content: space-between;"><span style="font-weight: bold;">' + item.size + ' / ' + item.color + ' / ' + Math.abs(item.quantity) + 'EA</span><span style="color: #666;">' + item.renter + ' ' + (item.rentalDate.split(' ')[0] || '').substring(5) + '</span></div>';
                 fragment.appendChild(itemDiv);
             });
-            suggestionsBox.appendChild(fragment);
-            suggestionsBox.classList.add('visible');
-        } else { suggestionsBox.classList.remove('visible'); }
-    }
+            div.appendChild(fragment);
+        }
 
-    function executeSearch() {
-        var query = document.getElementById('unified-search-input').value.trim();
-        var listDiv = document.getElementById('return-list');
-        if (!query) { showToast('검색어 입력'); listDiv.innerHTML = '<div class="loader">검색어 입력</div>'; return; }
-        var items = appData.rentals.filter(function(item) {
-            if (item.status !== '대여중') return false;
-            return (item.renter.includes(query) || getChosung(item.renter).includes(query)) || 
-                   (item.productName.includes(query) || getChosung(item.productName).includes(query));
-        });
-        renderReturnList(items);
-    }
-    
-    function renderReturnList(items) {
-        currentReturnItems = items.map(function(item) { item.checked = false; return item; });
-        
-        // 검색 결과 개수 및 체크박스 상태 업데이트
-        var countSpan = document.getElementById('return-list-count');
-        if (countSpan) countSpan.textContent = items.length ? '(' + items.length + ')' : '';
-        var selectAllChk = document.getElementById('select-all-return-chk');
-        if (selectAllChk) selectAllChk.checked = false;
+        function showOutfitInputModal() {
+            if (!currentProductCode) { showToast('상품 선택 필요'); return; }
+            document.getElementById('modal-product-name').textContent = document.getElementById('product-name').textContent;
+            document.getElementById('outfit-input-modal').classList.remove('hidden');
+            var inputs = document.querySelectorAll('.host-name, .outfit-size');
+            for (var i = 0; i < inputs.length; i++) inputs[i].value = '';
+            document.getElementById('confirm-outfit-btn').disabled = false;
+            document.getElementById('confirm-outfit-btn').textContent = '확인 및 저장';
+        }
+        function closeOutfitInputModal() { document.getElementById('outfit-input-modal').classList.add('hidden'); }
 
-        var div = document.getElementById('return-list');
-        div.innerHTML = '';
-        if (!items.length) { div.innerHTML = '<div class="loader">결과 없음</div>'; return; }
+        function processOutfitInput() {
+            var productCode = currentProductCode;
+            if (!productCode) return;
+            var inputs = [];
+            for (var i = 1; i <= 4; i++) {
+                var hostName = document.querySelector('.host-name[data-row="' + i + '"]').value.trim();
+                var size = document.querySelector('.outfit-size[data-row="' + i + '"]').value.trim();
+                if (hostName && size) inputs.push({ productCode: productCode, hostName: hostName, size: size });
+            }
+            if (inputs.length === 0) { showToast('데이터 없음'); return; }
+            document.getElementById('confirm-outfit-btn').textContent = '저장 중...';
+            document.getElementById('confirm-outfit-btn').disabled = true;
 
-        var fragment = document.createDocumentFragment();
-        items.forEach(function(item, index) {
-            var itemDiv = document.createElement('div');
-            itemDiv.className = 'return-item';
-            
-            var checkbox = document.createElement('input');
-            checkbox.type = 'checkbox';
-            checkbox.onchange = function(e) { currentReturnItems[index].checked = e.target.checked; };
-            
-            var checkboxCol = document.createElement('div'); checkboxCol.className = 'col-chk'; checkboxCol.appendChild(checkbox);
-            var renterCol = document.createElement('div'); renterCol.className = 'col-renter'; renterCol.textContent = item.renter;
-            
-            var mainCol = document.createElement('div'); mainCol.className = 'col-main';
-            var titleDiv = document.createElement('div'); titleDiv.className = 'prod-title'; titleDiv.textContent = item.productName;
-            var subDiv = document.createElement('div'); subDiv.className = 'prod-sub'; subDiv.textContent = item.size + ' / ' + item.color;
-            mainCol.appendChild(titleDiv); mainCol.appendChild(subDiv);
+            callBackend('saveOutfitsBulk', inputs)
+                .then(function (result) {
+                    if (result.success) {
+                        showToast(result.savedCount + '건 저장', true);
+                        if (result.newOutfits) appData.outfits.push(...result.newOutfits);
+                        renderOutfits(productCode);
+                        closeOutfitInputModal();
+                    } else { showToast('저장 실패'); }
+                })
+                .catch(function () { showToast('통신 오류'); })
+                .finally(function () { document.getElementById('confirm-outfit-btn').disabled = false; });
+        }
 
-            var qtyCol = document.createElement('div'); qtyCol.className = 'col-qty'; qtyCol.textContent = Math.abs(item.quantity);
-            var dateCol = document.createElement('div'); dateCol.className = 'col-date'; dateCol.textContent = (item.rentalDate || '').split(' ')[0];
-
-            itemDiv.appendChild(checkboxCol);
-            itemDiv.appendChild(renterCol);
-            itemDiv.appendChild(mainCol);
-            itemDiv.appendChild(qtyCol);
-            itemDiv.appendChild(dateCol);
-            fragment.appendChild(itemDiv);
-        });
-        div.appendChild(fragment);
-        showToast(items.length + '건 검색');
-    }
-    
-    function toggleAllReturnItems(checked) {
-        currentReturnItems.forEach(function(item) { item.checked = checked; });
-        var boxes = document.querySelectorAll('#return-list input[type="checkbox"]');
-        for (var i=0; i<boxes.length; i++) boxes[i].checked = checked;
-    }
-
-    function processReturnCheckout() {
-        var returnerName = document.getElementById('returner-name').value.trim();
-        if (!returnerName) { showToast('처리자 이름 필요'); return; }
-        var checkedItems = currentReturnItems.filter(function(item) { return item.checked; });
-        if (!checkedItems.length) { showToast('상품 선택 필요'); return; }
-        if (!confirm(returnerName + '님 반납 진행?')) return;
-        
-        callBackend('processReturn', checkedItems, returnerName)
-            .then(function(result) {
-                if (result.success) {
-                    showToast(result.message, true);
-                    if (result.returnedItems) {
-                        appData.rentals = appData.rentals.filter(function(item) { return result.returnedItems.indexOf(item.rowIndex) === -1; });
-                    }
-                    executeSearch();
-                    if (currentProductCode) renderProductDetails(currentProductCode, document.getElementById('product-name').textContent);
-                } else { showToast('반납 실패: ' + result.message); }
-            });
-    }
-
-    function getChosung(str) {
-        var CHO_HANGUL = ['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
-        var result = "";
-        for(var i = 0; i < str.length; i++) {
-            var code = str.charCodeAt(i) - 44032;
-            if(code > -1 && code < 11172) {
-                var choIdx = Math.floor(code / 588);
-                result += CHO_HANGUL[choIdx];
+        function addToCart(productCode, productName, color, size, maxQty, skuCode) {
+            var existing = rentalCart.find(function (item) { return item.productCode === productCode && item.color === color && item.size === size; });
+            if (existing) {
+                if (existing.quantity < maxQty) { existing.quantity++; showToast('수량: ' + existing.quantity); }
+                else { showToast('재고 초과'); }
             } else {
-                result += str.charAt(i);
+                rentalCart.push({ productCode: productCode, productName: productName, color: color, size: size, skuCode: skuCode, quantity: 1, maxQty: maxQty, checked: true });
+                showToast('추가됨');
+            }
+            renderCart();
+        }
+
+        function renderCart() {
+            var div = document.getElementById('cart-list');
+            div.innerHTML = '';
+            if (!rentalCart.length) { div.innerHTML = '<div class="loader">비어 있음</div>'; return; }
+
+            var fragment = document.createDocumentFragment();
+            rentalCart.forEach(function (item, index) {
+                var cartItem = document.createElement('div');
+                cartItem.className = 'cart-item';
+
+                // 1. 정보 영역 (체크박스 + 텍스트)
+                var infoWrapper = document.createElement('div');
+                infoWrapper.className = 'cart-info-wrapper';
+
+                var checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.checked = item.checked;
+                checkbox.style.marginRight = '12px';
+                checkbox.onchange = function (e) {
+                    item.checked = e.target.checked;
+                    syncSelectAllRentalCheckbox();
+                };
+
+                var textDetails = document.createElement('div');
+                textDetails.className = 'cart-text-details';
+
+                var nameDiv = document.createElement('div');
+                nameDiv.style.fontWeight = '700';
+                nameDiv.style.color = '#333';
+                nameDiv.textContent = item.productName;
+
+                var subDiv = document.createElement('div');
+                subDiv.style.fontSize = '0.82em';
+                subDiv.style.color = '#777';
+                subDiv.style.marginTop = '2px';
+                subDiv.textContent = item.size + ' / ' + item.color + ' (재고: ' + item.maxQty + ')';
+
+                textDetails.appendChild(nameDiv);
+                textDetails.appendChild(subDiv);
+                infoWrapper.appendChild(checkbox);
+                infoWrapper.appendChild(textDetails);
+
+                // 2. 액션 영역 (수량 + 삭제)
+                var actionsDiv = document.createElement('div');
+                actionsDiv.className = 'cart-actions';
+
+                var qtyInput = document.createElement('input');
+                qtyInput.type = 'number';
+                qtyInput.className = 'quantity-input';
+                qtyInput.min = 1; qtyInput.max = item.maxQty; qtyInput.value = item.quantity;
+                qtyInput.onchange = function (e) {
+                    var newQty = parseInt(e.target.value);
+                    if (isNaN(newQty) || newQty < 1) newQty = 1;
+                    if (newQty > item.maxQty) newQty = item.maxQty;
+                    item.quantity = newQty; e.target.value = newQty;
+                };
+
+                var deleteBtn = document.createElement('span');
+                deleteBtn.className = 'delete-btn';
+                deleteBtn.textContent = '✕';
+                deleteBtn.onclick = function () { rentalCart.splice(index, 1); renderCart(); };
+
+                actionsDiv.appendChild(qtyInput);
+                actionsDiv.appendChild(deleteBtn);
+
+                cartItem.appendChild(infoWrapper);
+                cartItem.appendChild(actionsDiv);
+                fragment.appendChild(cartItem);
+            });
+            div.appendChild(fragment);
+        }
+        function toggleAllCartItems(checked) {
+            rentalCart.forEach(function (item) { item.checked = checked; });
+            renderCart();
+        }
+
+        function syncSelectAllRentalCheckbox() {
+            var allChecked = rentalCart.length > 0 && rentalCart.every(function (item) { return item.checked; });
+            var selectAllChk = document.getElementById('select-all-rental-chk');
+            if (selectAllChk) selectAllChk.checked = allChecked;
+        }
+
+        function processRentalCheckout() {
+            var renterName = document.getElementById('renter-name').value.trim();
+            if (!renterName) { showToast('이름 입력 필요'); return; }
+            var checkedItems = rentalCart.filter(function (item) { return item.checked && item.quantity > 0; });
+            if (!checkedItems.length) { showToast('상품 선택 필요'); return; }
+            if (!confirm(renterName + '님 대여 진행?')) return;
+
+            callBackend('processRental', checkedItems, renterName)
+                .then(function (result) {
+                    if (result.success) {
+                        showToast(result.message, true);
+                        if (result.newRentals) result.newRentals.forEach(function (r) { appData.rentals.push(r); });
+                        rentalCart = rentalCart.filter(function (item) { return !item.checked; });
+                        renderCart();
+                        document.getElementById('renter-name').value = '';
+                        if (currentProductCode) renderProductDetails(currentProductCode, document.getElementById('product-name').textContent);
+                    } else { showToast('실패: ' + result.message); }
+                });
+        }
+
+        function toggleCheckoutMode(mode) {
+            var rentalBtn = document.getElementById('toggle-rental');
+            var returnBtn = document.getElementById('toggle-return');
+            var rentalDiv = document.getElementById('rental-checkout');
+            var returnDiv = document.getElementById('return-checkout');
+            if (mode === 'rental') {
+                rentalBtn.classList.add('active'); returnBtn.classList.remove('active');
+                rentalDiv.classList.remove('hidden'); returnDiv.classList.add('hidden');
+            } else {
+                returnBtn.classList.add('active'); rentalBtn.classList.remove('active');
+                returnDiv.classList.remove('hidden'); rentalDiv.classList.add('hidden');
+                document.getElementById('unified-search-input').value = '';
+                document.getElementById('search-suggestions').classList.remove('visible');
+                renderReturnList([]);
+                document.getElementById('return-list').innerHTML = '<div class="loader">검색하세요</div>';
             }
         }
-        return result;
-    }
 
-    function showToast(message, isSuccess) {
-        var container = document.getElementById('toast-container');
-        if (!container) {
-            container = document.createElement('div');
-            container.id = 'toast-container';
-            container.className = 'toast-container';
+        function handleSearchInputSuggestions(e) {
+            var query = e.target.value.trim();
+            var suggestionsBox = document.getElementById('search-suggestions');
+            if (!query) { suggestionsBox.innerHTML = ''; suggestionsBox.classList.remove('visible'); return; }
+
+            var brandMatches = (appData.brands || []).filter(function (brand) { return brand.includes(query) || getChosung(brand).includes(query); }).map(function (brand) { return { type: 'brand', text: brand }; });
+            var uniqueRenters = [];
+            appData.rentals.filter(function (item) { return item.status === '대여중'; }).forEach(function (item) { if (item.renter && uniqueRenters.indexOf(item.renter) === -1) uniqueRenters.push(item.renter); });
+
+            var renterMatches = uniqueRenters.filter(function (renter) { return renter.includes(query) || getChosung(renter).includes(query); }).map(function (renter) { return { type: 'renter', text: renter }; });
+            var allMatches = brandMatches.concat(renterMatches);
+
+            if (allMatches.length > 0) {
+                suggestionsBox.innerHTML = '';
+                var fragment = document.createDocumentFragment();
+                allMatches.forEach(function (match) {
+                    var itemDiv = document.createElement('div');
+                    itemDiv.className = 'suggestion-item';
+                    itemDiv.innerHTML = '<span class="suggestion-text">' + match.text + '</span>';
+                    itemDiv.onclick = function () {
+                        document.getElementById('unified-search-input').value = match.text;
+                        suggestionsBox.classList.remove('visible');
+                    };
+                    fragment.appendChild(itemDiv);
+                });
+                suggestionsBox.appendChild(fragment);
+                suggestionsBox.classList.add('visible');
+            } else { suggestionsBox.classList.remove('visible'); }
+        }
+
+        function executeSearch() {
+            var query = document.getElementById('unified-search-input').value.trim();
+            var listDiv = document.getElementById('return-list');
+            if (!query) { showToast('검색어 입력'); listDiv.innerHTML = '<div class="loader">검색어 입력</div>'; return; }
+
+            var items = appData.rentals.filter(function (item) {
+                if (item.status !== '대여중') return false;
+                if (query === '전체') return true;
+                return (item.renter.includes(query) || getChosung(item.renter).includes(query)) ||
+                    (item.productName.includes(query) || getChosung(item.productName).includes(query));
+            });
+            renderReturnList(items);
+        }
+
+        function renderReturnList(items) {
+            currentReturnItems = items.map(function (item) { item.checked = false; return item; });
+
+            // 검색 결과 개수 및 체크박스 상태 업데이트
+            var countSpan = document.getElementById('return-list-count');
+            if (countSpan) countSpan.textContent = items.length ? '(' + items.length + ')' : '';
+            var selectAllChk = document.getElementById('select-all-return-chk');
+            if (selectAllChk) selectAllChk.checked = false;
+
+            var div = document.getElementById('return-list');
+            div.innerHTML = '';
+            if (!items.length) { div.innerHTML = '<div class="loader">결과 없음</div>'; return; }
+
+            var fragment = document.createDocumentFragment();
+            items.forEach(function (item, index) {
+                var itemDiv = document.createElement('div');
+                itemDiv.className = 'return-item';
+
+                var checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.onchange = function (e) { currentReturnItems[index].checked = e.target.checked; };
+
+                var checkboxCol = document.createElement('div'); checkboxCol.className = 'col-chk'; checkboxCol.appendChild(checkbox);
+                var renterCol = document.createElement('div'); renterCol.className = 'col-renter'; renterCol.textContent = item.renter;
+
+                var mainCol = document.createElement('div'); mainCol.className = 'col-main';
+                var titleDiv = document.createElement('div'); titleDiv.className = 'prod-title'; titleDiv.textContent = item.productName;
+                var subDiv = document.createElement('div'); subDiv.className = 'prod-sub'; subDiv.textContent = item.size + ' / ' + item.color;
+                mainCol.appendChild(titleDiv); mainCol.appendChild(subDiv);
+
+                var qtyCol = document.createElement('div'); qtyCol.className = 'col-qty'; qtyCol.textContent = Math.abs(item.quantity);
+                var dateCol = document.createElement('div'); dateCol.className = 'col-date'; dateCol.textContent = (item.rentalDate || '').split(' ')[0];
+
+                itemDiv.appendChild(checkboxCol);
+                itemDiv.appendChild(renterCol);
+                itemDiv.appendChild(mainCol);
+                itemDiv.appendChild(qtyCol);
+                itemDiv.appendChild(dateCol);
+                fragment.appendChild(itemDiv);
+            });
+            div.appendChild(fragment);
+            showToast(items.length + '건 검색');
+        }
+
+        function toggleAllReturnItems(checked) {
+            currentReturnItems.forEach(function (item) { item.checked = checked; });
+            var boxes = document.querySelectorAll('#return-list input[type="checkbox"]');
+            for (var i = 0; i < boxes.length; i++) boxes[i].checked = checked;
+        }
+
+        function processReturnCheckout() {
+            var returnerName = document.getElementById('returner-name').value.trim();
+            if (!returnerName) { showToast('처리자 이름 필요'); return; }
+            var checkedItems = currentReturnItems.filter(function (item) { return item.checked; });
+            if (!checkedItems.length) { showToast('상품 선택 필요'); return; }
+            if (!confirm(returnerName + '님 반납 진행?')) return;
+
+            callBackend('processReturn', checkedItems, returnerName)
+                .then(function (result) {
+                    if (result.success) {
+                        showToast(result.message, true);
+                        if (result.returnedItems) {
+                            appData.rentals = appData.rentals.filter(function (item) { return result.returnedItems.indexOf(item.rowIndex) === -1; });
+                        }
+                        executeSearch();
+                        if (currentProductCode) renderProductDetails(currentProductCode, document.getElementById('product-name').textContent);
+                    } else { showToast('반납 실패: ' + result.message); }
+                });
+        }
+
+        function getChosung(str) {
+            var CHO_HANGUL = ['ㄱ', 'ㄲ', 'ㄴ', 'ㄷ', 'ㄸ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅃ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅉ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'];
+            var result = "";
+            for (var i = 0; i < str.length; i++) {
+                var code = str.charCodeAt(i) - 44032;
+                if (code > -1 && code < 11172) {
+                    var choIdx = Math.floor(code / 588);
+                    result += CHO_HANGUL[choIdx];
+                } else {
+                    result += str.charAt(i);
+                }
+            }
+            return result;
+        }
+
+        function showToast(message, isSuccess) {
+            var container = document.getElementById('toast-container');
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'toast-container';
+                container.className = 'toast-container';
+                document.body.appendChild(container);
+            }
+            var toast = document.createElement('div');
+            toast.className = 'toast-message';
+            toast.textContent = message;
+            container.appendChild(toast);
+
+            if (isSuccess) {
+                confetti();
+            }
+
+            setTimeout(function () { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 3000);
+        }
+
+        function confetti() {
+            var d = 50;
+            var colors = ['#ff7373', '#ffd473', '#73ff73', '#7373ff', '#ff73ff'];
+            var center_x = window.innerWidth / 2;
+            var center_y = window.innerHeight / 2;
+            var radius = 200;
+
+            var container = document.createElement('div');
+            container.style.position = 'fixed';
+            container.style.top = '0';
+            container.style.left = '0';
+            container.style.width = '100%';
+            container.style.height = '100%';
+            container.style.pointerEvents = 'none';
+            container.style.zIndex = '2000';
             document.body.appendChild(container);
-        }
-        var toast = document.createElement('div');
-        toast.className = 'toast-message';
-        toast.textContent = message;
-        container.appendChild(toast);
-        
-        if (isSuccess) {
-            confetti(); 
-        }
-        
-        setTimeout(function() { if(toast.parentNode) toast.parentNode.removeChild(toast); }, 3000);
-    }
-    
-    function confetti() {
-        var d = 50; 
-        var colors = ['#ff7373', '#ffd473', '#73ff73', '#7373ff', '#ff73ff']; 
-        var center_x = window.innerWidth / 2;
-        var center_y = window.innerHeight / 2;
-        var radius = 200; 
-        
-        var container = document.createElement('div');
-        container.style.position = 'fixed';
-        container.style.top = '0';
-        container.style.left = '0';
-        container.style.width = '100%';
-        container.style.height = '100%';
-        container.style.pointerEvents = 'none';
-        container.style.zIndex = '2000';
-        document.body.appendChild(container);
 
-        for(var i=0; i<d; i++) {
-            var p = document.createElement('div');
-            var color = colors[Math.floor(Math.random() * colors.length)];
-            var size = Math.floor(Math.random() * 5) + 5; 
-            var angle = Math.random() * 360;
-            var distance = Math.random() * radius;
-            var rotation = Math.random() * 720;
-            var duration = 1 + Math.random() * 2; 
+            for (var i = 0; i < d; i++) {
+                var p = document.createElement('div');
+                var color = colors[Math.floor(Math.random() * colors.length)];
+                var size = Math.floor(Math.random() * 5) + 5;
+                var angle = Math.random() * 360;
+                var distance = Math.random() * radius;
+                var rotation = Math.random() * 720;
+                var duration = 1 + Math.random() * 2;
 
-            var end_x = center_x + distance * Math.cos(angle * Math.PI / 180);
-            var end_y = center_y + distance * Math.sin(angle * Math.PI / 180);
-            
-            p.style.cssText = 'position: absolute; width: ' + size + 'px; height: ' + size + 'px; background: ' + color + '; border-radius: 50%; top: ' + center_y + 'px; left: ' + center_x + 'px; opacity: 1; transition: transform ' + duration + 's ease-out, opacity ' + duration + 's ease-in;';
+                var end_x = center_x + distance * Math.cos(angle * Math.PI / 180);
+                var end_y = center_y + distance * Math.sin(angle * Math.PI / 180);
 
-            container.appendChild(p);
-            
-            (function(p, end_x, end_y, rotation) {
-                setTimeout(function() {
-                    p.style.transform = 'translate(' + (end_x - center_x) + 'px, ' + (end_y - center_y) + 'px) rotate(' + rotation + 'deg)';
-                    p.style.opacity = '0';
-                }, 10);
-            })(p, end_x, end_y, rotation);
-            
-            (function(p, duration) {
-                setTimeout(function() { if(p.parentNode) p.parentNode.removeChild(p); }, duration * 1000);
-            })(p, duration);
+                p.style.cssText = 'position: absolute; width: ' + size + 'px; height: ' + size + 'px; background: ' + color + '; border-radius: 50%; top: ' + center_y + 'px; left: ' + center_x + 'px; opacity: 1; transition: transform ' + duration + 's ease-out, opacity ' + duration + 's ease-in;';
+
+                container.appendChild(p);
+
+                (function (p, end_x, end_y, rotation) {
+                    setTimeout(function () {
+                        p.style.transform = 'translate(' + (end_x - center_x) + 'px, ' + (end_y - center_y) + 'px) rotate(' + rotation + 'deg)';
+                        p.style.opacity = '0';
+                    }, 10);
+                })(p, end_x, end_y, rotation);
+
+                (function (p, duration) {
+                    setTimeout(function () { if (p.parentNode) p.parentNode.removeChild(p); }, duration * 1000);
+                })(p, duration);
+            }
+            setTimeout(function () { if (container.parentNode) container.parentNode.removeChild(container); }, 3500);
         }
-        setTimeout(function() { if(container.parentNode) container.parentNode.removeChild(container); }, 3500);
-    }
-</script>
+    </script>
 </body>
+
 </html>
