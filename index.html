@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>방송준비실 재고 관리</title>
+  <style>
+    /* CSS 스타일 */
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+    :root { --color-accent: #6c757d; --color-accent-dark: #495057; --color-background: #fff; --color-surface: #fff; --color-text-primary: #333; --color-text-secondary: #666; --color-border-light: #e0e0e0; --color-danger: #dc3545; --font-size-base: 14px; }
+    body { font-family: 'Roboto', 'Arial', sans-serif; margin: 0; padding: 0; background-color: var(--color-background); color: var(--color-text-primary); font-size: var(--font-size-base); }
+    .container { display: flex; width: 100%; height: 100vh; overflow: hidden; }
+    .column { padding: 20px; border-right: 1px solid var(--color-border-light); overflow-y: auto; box-sizing: border-box; display: flex; flex-direction: column; }
+    .column:nth-child(1) { flex: 0 0 25%; max-width: 25%; min-width: 280px; background-color: #fdfdfd; }
+    .column:nth-child(2) { flex: 0 0 45%; max-width: 45%; min-width: 500px; padding: 25px; }
+    .column:nth-child(3) { flex: 0 0 30%; max-width: 30%; min-width: 300px; border-right: none; background-color: #fafafa; }
+    h2 { font-size: 1.2rem; font-weight: 700; margin: 0 0 15px 0; padding-bottom: 10px; border-bottom: 2px solid #333; }
+    h3 { font-size: 1.1rem; font-weight: 600; margin: 20px 0 10px 0; }
+    .loader { text-align: center; padding: 30px; color: #999; }
+    .hidden { display: none !important; }
+    .brand-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+    .brand-item { padding: 8px 4px; border: 1px solid #ddd; border-radius: 4px; cursor: pointer; text-align: center; font-weight: 600; font-size: 12px; transition: all 0.2s; }
+    .brand-item.selected { background-color: var(--color-accent-dark); color: #fff; }
+    .product-item { padding: 10px; border: 1px solid #e9ecef; border-radius: 4px; cursor: pointer; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
+    .product-item.selected { background-color: var(--color-accent); color: #fff; }
+    .info-header { text-align: center; margin-bottom: 20px; position: relative; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+    .info-location { position: absolute; left: 0; top: 0; font-weight: 700; color: var(--color-accent); }
+    .info-name { font-size: 1.4rem; font-weight: 800; }
+    #product-image { width: 180px; display: block; margin: 0 auto 15px; border-radius: 8px; border: 1px solid #eee; }
+    .inventory-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
+    .inventory-table th, .inventory-table td { border: 1px solid #e0e0e0; padding: 8px; text-align: center; }
+    .inventory-cell { cursor: pointer; font-weight: 700; background: #fff; }
+    .inventory-cell:hover { background: #f1f3f5; }
+    .note-input { width: 100%; padding: 10px; box-sizing: border-box; border: 1px solid #ddd; border-radius: 4px; }
+    .bottom-grids { display: flex; gap: 10px; margin-top: 10px; }
+    .grid-section { flex: 1; border: 1px solid #e0e0e0; padding: 10px; border-radius: 6px; background: #fff; }
+    .outfit-item { border: 1px solid #eee; padding: 6px; margin-bottom: 4px; font-size: 0.9em; text-align: center; cursor: pointer; }
+    .toggle-buttons { display: flex; margin-bottom: 15px; border-radius: 6px; overflow: hidden; }
+    .toggle-buttons button { flex: 1; padding: 10px; border: 1px solid #ddd; background: #fff; cursor: pointer; font-weight: 600; }
+    .toggle-buttons button.active { background: var(--color-accent-dark); color: #fff; }
+    .cart-item { display: flex; justify-content: space-between; padding: 8px; border-bottom: 1px solid #eee; align-items: center; font-size: 0.9em; }
+    .quantity-input { width: 45px; margin-right: 5px; }
+    .checkout-btn { width: 100%; padding: 12px; background: var(--color-accent-dark); color: #fff; border: none; border-radius: 6px; cursor: pointer; font-weight: 700; margin-top: 10px; }
+    .return-item { display: flex; padding: 8px 0; border-bottom: 1px solid #eee; font-size: 0.85em; text-align: center; align-items: center; }
+    .col-chk { width: 30px; } .col-renter { width: 60px; } .col-name { flex: 1; text-align: left; } .col-info { width: 60px; }
+    .search-section { display: flex; gap: 5px; margin-bottom: 10px; }
+    .unified-search-input { flex: 1; padding: 8px; border: 1px solid #ddd; }
+    .toast-container { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; }
+    .toast-message { background: rgba(0,0,0,0.8); color: #fff; padding: 10px 20px; border-radius: 20px; margin-top: 5px; animation: fade 2.5s forwards; }
+    @keyframes fade { 0% {opacity:0;} 10% {opacity:1;} 90% {opacity:1;} 100% {opacity:0;} }
+  </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="col1" class="column">
+        <h2>브랜드 및 상품</h2>
+        <div id="brand-list" class="brand-grid"></div>
+        <hr>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h3>상품 목록</h3>
+            <input type="text" id="product-search-input" placeholder="검색" style="width:100px; padding:4px; border:1px solid #ddd;">
+        </div>
+        <div id="product-list"></div>
+    </div>
+
+    <div id="col2" class="column">
+        <div id="product-details-content" class="hidden">
+            <img id="product-image" src="" alt="상품 이미지">
+            <div class="info-header">
+                <span id="product-location" class="info-location"></span>
+                <span id="product-name" class="info-name"></span>
+            </div>
+            <div id="inventory-matrix-container"></div>
+            <input type="text" id="product-note" class="note-input" placeholder="유의사항 입력 시 자동 저장">
+            <div class="bottom-grids">
+                <div class="grid-section">
+                    <h4>착장 내역</h4>
+                    <div id="outfit-list"></div>
+                </div>
+                <div class="grid-section">
+                    <h4>대여 현황</h4>
+                    <div id="rental-history-list"></div>
+                </div>
+            </div>
+        </div>
+        <div id="col2-placeholder" class="loader">상품을 선택하세요.</div>
+    </div>
+
+    <div id="col3" class="column">
+        <div class="toggle-buttons">
+            <button id="toggle-rental" class="active">대여</button>
+            <button id="toggle-return">반납</button>
+        </div>
+
+        <div id="rental-checkout">
+            <h3>대여 바구니</h3>
+            <div id="cart-list"></div>
+            <input type="text" id="renter-name" placeholder="대여자 이름" style="width:100%; padding:8px; margin-top:10px; box-sizing:border-box;">
+            <button id="process-rental-btn" class="checkout-btn">대여 완료</button>
+        </div>
+
+        <div id="return-checkout" class="hidden">
+            <h3>반납 내역 조회</h3>
+            <div class="search-section">
+                <input type="text" id="unified-search-input" class="unified-search-input" placeholder="이름/상품/브랜드 검색">
+                <button id="search-execute-btn" style="padding:0 10px;">조회</button>
+            </div>
+            <div id="return-list"></div>
+            <input type="text" id="returner-name" placeholder="반납 확인자 이름" style="width:100%; padding:8px; margin-top:10px; box-sizing:border-box;">
+            <button id="process-return-btn" class="checkout-btn">반납 처리</button>
+        </div>
+    </div>
+</div>
+
+<div id="toast-container" class="toast-container"></div>
+
+<script>
+    // 배포된 GAS 웹앱 주소
+    const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwUhg-Wra36tHNgQ9Ql8BPSMj8LfEF8n-cww7WpoNtujVI3hWb0un9iWx3JhLvMaEM5/exec";
+
+    let appData = { brands: [], rawData: [], images: {}, outfits: [], rentals: [], notes: {} };
+    let currentBrand = null, currentProductCode = null, rentalCart = [], currentReturnItems = [];
+
+    // 서버 통신용 공통 함수
+    async function callBackend(funcName, ...args) {
+        try {
+            const response = await fetch(GAS_WEB_APP_URL, {
+                method: "POST",
+                body: JSON.stringify({ function: funcName, arguments: args })
+            });
+            const data = await response.json();
+            if (data && data.success === false) throw new Error(data.message);
+            return data;
+        } catch (e) {
+            showToast("통신 오류: " + e.message);
+            throw e;
+        }
+    }
+
+    // 초기 데이터 로드
+    window.onload = async () => {
+        const data = await callBackend('loadAllData');
+        Object.assign(appData, data);
+        renderBrands();
+        setupEventListeners();
+    };
+
+    function setupEventListeners() {
+        document.getElementById('toggle-rental').onclick = () => switchMode('rental');
+        document.getElementById('toggle-return').onclick = () => switchMode('return');
+        document.getElementById('product-search-input').oninput = (e) => renderProducts(currentBrand, e.target.value);
+        document.getElementById('process-rental-btn').onclick = processRental;
+        document.getElementById('search-execute-btn').onclick = executeReturnSearch;
+        document.getElementById('process-return-btn').onclick = processReturn;
+        document.getElementById('product-note').onchange = saveNote;
+    }
+
+    function renderBrands() {
+        const container = document.getElementById('brand-list');
+        container.innerHTML = appData.brands.map(b => `<div class="brand-item" onclick="selectBrand('${b}', this)">${b}</div>`).join('');
+    }
+
+    function selectBrand(name, el) {
+        document.querySelectorAll('.brand-item').forEach(i => i.classList.remove('selected'));
+        el.classList.add('selected');
+        currentBrand = name;
+        renderProducts(name);
+    }
+
+    function renderProducts(brand, filter = "") {
+        const list = document.getElementById('product-list');
+        const filtered = appData.rawData.filter(p => p.productName.includes(brand) && (p.productName.includes(filter) || p.productCode.includes(filter)));
+        const unique = Array.from(new Set(filtered.map(p => p.productCode))).map(code => filtered.find(p => p.productCode === code));
+        
+        list.innerHTML = unique.map(p => `
+            <div class="product-item ${currentProductCode === p.productCode ? 'selected' : ''}" onclick="selectProduct('${p.productCode}', '${p.productName.replace(/'/g, "\\'")}')">
+                <span>${p.productName}</span><small>${p.productCode}</small>
+            </div>
+        `).join('');
+    }
+
+    async function selectProduct(code, name) {
+        currentProductCode = code;
+        renderProducts(currentBrand);
+        document.getElementById('col2-placeholder').classList.add('hidden');
+        document.getElementById('product-details-content').classList.remove('hidden');
+        
+        const details = appData.rawData.filter(p => p.productCode === code);
+        document.getElementById('product-name').innerText = name;
+        document.getElementById('product-location').innerText = details[0]?.location || '';
+        document.getElementById('product-note').value = appData.notes[code] || '';
+
+        // 이미지 처리
+        const imgEl = document.getElementById('product-image');
+        imgEl.src = "https://via.placeholder.com/150?text=Loading...";
+        const driveUrl = appData.images[code];
+        if (driveUrl && driveUrl.includes('drive.google.com')) {
+            const base64 = await callBackend('getDriveImageBase64', driveUrl);
+            imgEl.src = base64 || genGsUrl(code);
+        } else {
+            imgEl.src = driveUrl || genGsUrl(code);
+        }
+
+        renderInventory(details);
+        renderOutfits(code);
+        renderRentalHistory(code);
+    }
+
+    function genGsUrl(code) {
+        if (!code || code.length < 6) return "https://via.placeholder.com/150?text=No+Image";
+        return `https://image.gsshop.com/image/${code.substring(0,2)}/${code.substring(2,4)}/${code.substring(4,6)}/${code}_B1.jpg`;
+    }
+
+    function renderInventory(data) {
+        const container = document.getElementById('inventory-matrix-container');
+        const colors = [...new Set(data.map(d => d.color))].sort();
+        const sizes = [...new Set(data.map(d => d.size))].sort();
+        
+        let html = `<table class="inventory-table"><thead><tr><th></th>${sizes.map(s => `<th>${s}</th>`).join('')}</tr></thead><tbody>`;
+        colors.forEach(c => {
+            html += `<tr><th>${c}</th>`;
+            sizes.forEach(s => {
+                const item = data.find(d => d.color === c && d.size === s);
+                html += item ? `<td class="inventory-cell" onclick="addToCart('${item.productCode}','${item.productName.replace(/'/g,"\\'")}','${c}','${s}',${item.quantity},'${item.skuCode}')">${item.quantity}</td>` : `<td>-</td>`;
+            });
+            html += `</tr>`;
+        });
+        container.innerHTML = html + `</tbody></table>`;
+    }
+
+    function addToCart(code, name, color, size, max, sku) {
+        const existing = rentalCart.find(c => c.productCode === code && c.color === color && c.size === size);
+        if (existing) {
+            if (existing.quantity < max) existing.quantity++;
+            else { showToast("재고 부족"); return; }
+        } else {
+            rentalCart.push({ productCode: code, productName: name, color, size, quantity: 1, max, skuCode: sku });
+        }
+        renderCart();
+        showToast("장바구니 추가됨");
+    }
+
+    function renderCart() {
+        const container = document.getElementById('cart-list');
+        container.innerHTML = rentalCart.map((item, i) => `
+            <div class="cart-item">
+                <span style="flex:1;">${item.productName} (${item.size}/${item.color})</span>
+                <input type="number" class="quantity-input" value="${item.quantity}" min="1" max="${item.max}" onchange="updateCartQty(${i}, this.value)">
+                <button onclick="rentalCart.splice(${i},1); renderCart();">X</button>
+            </div>
+        `).join('');
+    }
+
+    function updateCartQty(i, val) {
+        let q = parseInt(val);
+        if (q > rentalCart[i].max) q = rentalCart[i].max;
+        if (q < 1) q = 1;
+        rentalCart[i].quantity = q;
+        renderCart();
+    }
+
+    async function processRental() {
+        const name = document.getElementById('renter-name').value.trim();
+        if (!name) return showToast("대여자 이름을 입력하세요.");
+        if (rentalCart.length === 0) return showToast("대여할 상품이 없습니다.");
+        
+        const res = await callBackend('processRental', rentalCart, name);
+        if (res.success) {
+            showToast("대여 처리 완료");
+            appData.rentals.push(...res.newRentals);
+            rentalCart = []; renderCart();
+            document.getElementById('renter-name').value = '';
+            selectProduct(currentProductCode, document.getElementById('product-name').innerText);
+        }
+    }
+
+    function executeReturnSearch() {
+        const q = document.getElementById('unified-search-input').value.trim();
+        if (!q) return showToast("검색어를 입력하세요.");
+        currentReturnItems = appData.rentals.filter(r => r.renter.includes(q) || r.productName.includes(q) || r.productCode.includes(q));
+        renderReturnList();
+    }
+
+    function renderReturnList() {
+        const list = document.getElementById('return-list');
+        list.innerHTML = currentReturnItems.map((item, i) => `
+            <div class="return-item">
+                <div class="col-chk"><input type="checkbox" onchange="currentReturnItems[${i}].selected = this.checked"></div>
+                <div class="col-renter">${item.renter}</div>
+                <div class="col-name">${item.productName}</div>
+                <div class="col-info">${item.size}</div>
+            </div>
+        `).join('') || '<div class="loader">내역이 없습니다.</div>';
+    }
+
+    async function processReturn() {
+        const name = document.getElementById('returner-name').value.trim();
+        const targets = currentReturnItems.filter(i => i.selected);
+        if (!name || targets.length === 0) return showToast("반납자 이름과 상품을 확인하세요.");
+        
+        const res = await callBackend('processReturn', targets, name);
+        if (res.success) {
+            showToast("반납 완료");
+            appData.rentals = appData.rentals.filter(r => !res.returnedItems.includes(r.rowIndex));
+            executeReturnSearch();
+            document.getElementById('returner-name').value = '';
+            if (currentProductCode) selectProduct(currentProductCode, document.getElementById('product-name').innerText);
+        }
+    }
+
+    function switchMode(mode) {
+        document.getElementById('rental-checkout').classList.toggle('hidden', mode !== 'rental');
+        document.getElementById('return-checkout').classList.toggle('hidden', mode !== 'return');
+        document.getElementById('toggle-rental').classList.toggle('active', mode === 'rental');
+        document.getElementById('toggle-return').classList.toggle('active', mode === 'return');
+    }
+
+    function showToast(msg) {
+        const t = document.createElement('div'); t.className = 'toast-message'; t.innerText = msg;
+        document.getElementById('toast-container').appendChild(t);
+        setTimeout(() => t.remove(), 2500);
+    }
+
+    async function saveNote() {
+        if (!currentProductCode) return;
+        const val = document.getElementById('product-note').value;
+        appData.notes[currentProductCode] = val;
+        await callBackend('saveProductNote', currentProductCode, val);
+        showToast("유의사항 저장됨");
+    }
+
+    function renderOutfits(code) {
+        const div = document.getElementById('outfit-list');
+        const filtered = appData.outfits.filter(o => o.productCode === code);
+        div.innerHTML = filtered.map(o => `<div class="outfit-item"><b>${o.hostName}</b> (${o.size})</div>`).join('') || '내역 없음';
+    }
+
+    function renderRentalHistory(code) {
+        const div = document.getElementById('rental-history-list');
+        const filtered = appData.rentals.filter(r => r.productCode === code);
+        div.innerHTML = filtered.map(r => `<div style="font-size:0.85em; margin-bottom:5px; border-bottom:1px dashed #eee;">${r.renter} - ${r.size}/${r.color}</div>`).join('') || '대여중 없음';
+    }
+</script>
+</body>
+</html>
