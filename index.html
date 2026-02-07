@@ -656,6 +656,299 @@
             }
         }
 
+        .modal-overlay.hidden {
+            display: none !important;
+        }
+
+        #receipt-modal.modal-overlay {
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+            z-index: 5000;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .receipt-modal-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .receipt-container {
+            background: #fff;
+            width: 480px;
+            padding: 60px 40px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            position: relative;
+            font-family: var(--font-family);
+            color: #1a1a1a;
+            max-height: 90vh;
+            overflow-y: auto;
+            border-radius: 4px;
+        }
+
+        .scale-in {
+            animation: scaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .receipt-controls {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .receipt-icon-btn {
+            background: #f5f5f5;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            font-size: 18px;
+            color: #1a1a1a;
+        }
+
+        .receipt-icon-btn.close-btn {
+            position: absolute;
+            top: -20px;
+            right: -60px;
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            width: 44px;
+            height: 44px;
+            font-size: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            z-index: 7000;
+            backdrop-filter: blur(10px);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .receipt-icon-btn.close-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: #fff;
+            transform: scale(1.1) rotate(90deg);
+        }
+
+        /* Zig-Zag Edge Restoration & Refinement */
+        .receipt-container::before,
+        .receipt-container::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 12px;
+            background-size: 24px 24px;
+            background-repeat: repeat-x;
+            z-index: 10;
+        }
+
+        .receipt-container::before {
+            top: -12px;
+            background-image: linear-gradient(-45deg, transparent 12px, #fff 12px),
+                linear-gradient(45deg, transparent 12px, #fff 12px);
+        }
+
+        .receipt-container::after {
+            bottom: -12px;
+            background-image: linear-gradient(-45deg, #fff 12px, transparent 12px),
+                linear-gradient(45deg, #fff 12px, transparent 12px);
+        }
+
+        .receipt-header {
+            text-align: center;
+            border-bottom: 2px dashed #eee;
+            padding-bottom: 30px;
+            margin-bottom: 30px;
+        }
+
+        .receipt-logo {
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: #000;
+            margin-bottom: 8px;
+        }
+
+        .receipt-title {
+            font-size: 14px;
+            color: #666;
+            letter-spacing: 3px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .receipt-info-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            margin-bottom: 8px;
+            color: #444;
+        }
+
+        .receipt-info-row .label {
+            color: #888;
+            font-weight: 500;
+        }
+
+        .receipt-divider {
+            border-top: 2px dashed #eee;
+            margin: 25px 0;
+        }
+
+        .receipt-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .receipt-table th {
+            text-align: left;
+            padding: 12px 0;
+            border-bottom: 1px solid #000;
+            color: #000;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 12px;
+        }
+
+        .receipt-table td {
+            padding: 15px 0;
+            vertical-align: top;
+            border-bottom: 1px solid #f5f5f5;
+        }
+
+        .product-group-header {
+            font-weight: 800;
+            font-size: 15px;
+            color: #000;
+            padding-top: 20px !important;
+            border-bottom: none !important;
+        }
+
+        .variant-row td {
+            padding: 6px 0 6px 15px !important;
+            color: #666;
+            font-size: 13px;
+        }
+
+        .qty-cell {
+            text-align: right;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .receipt-total-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            font-weight: 800;
+            font-size: 18px;
+            border-top: 1px solid #000;
+            margin-top: 10px;
+        }
+
+        .receipt-signature-section {
+            margin-top: 40px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .sig-box {
+            text-align: center;
+            font-size: 12px;
+            color: #888;
+        }
+
+        .sig-line {
+            border-bottom: 1px solid #ccc;
+            height: 40px;
+            margin-bottom: 10px;
+        }
+
+        .receipt-footer-note {
+            text-align: center;
+            font-size: 11px;
+            color: #aaa;
+            line-height: 1.5;
+            margin-top: 40px;
+        }
+
+        .receipt-close-btn {
+            display: none;
+            /* Hide the old fixed button */
+        }
+
+        .receipt-close-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        @media print {
+            @page {
+                size: A4;
+                margin: 0;
+            }
+
+            body>*:not(#receipt-modal) {
+                display: none !important;
+            }
+
+            #receipt-modal.modal-overlay {
+                display: flex !important;
+                background: #fff !important;
+                visibility: visible !important;
+                position: static !important;
+                height: 100vh;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .modal-overlay {
+                background: #fff !important;
+                backdrop-filter: none !important;
+            }
+
+            .receipt-container {
+                box-shadow: none !important;
+                border: 1px solid #eee;
+                margin: 0 auto;
+                width: 480px;
+            }
+
+            .receipt-close-btn,
+            .receipt-controls {
+                display: none !important;
+            }
+        }
+
         .suggestions-box {
             position: absolute;
             top: 100%;
@@ -1028,7 +1321,7 @@
                         <tr>
                             <td>3</td>
                             <td><input type="text" class="host-name" data-row="3" placeholder="이름"></td>
-                            <td><input type="text" class="outfit-size" data-row="3" placeholder="사이즈"></td>
+                            <td><input type="text" class="outfit-size" data-row="4" placeholder="사이즈"></td>
                         </tr>
                         <tr>
                             <td>4</td>
@@ -1041,6 +1334,66 @@
             <div class="modal-footer">
                 <button id="cancel-outfit-btn" class="modal-btn ghost">취소</button>
                 <button id="confirm-outfit-btn" class="modal-btn primary">확인 및 저장</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 현대적 전자 영수증 (하이브리드 디자인) -->
+    <div id="receipt-modal" class="modal-overlay hidden">
+        <div class="receipt-modal-wrapper scale-in">
+            <button class="receipt-icon-btn close-btn" onclick="closeReceiptModal()" title="닫기 (ESC)">✕</button>
+            <div class="receipt-container">
+                <div class="receipt-controls">
+                    <button class="receipt-icon-btn" onclick="window.print()" title="인쇄">🖨️</button>
+                </div>
+                <div class="receipt-header">
+                    <div class="receipt-logo">GS SHOP</div>
+                    <div class="receipt-title">방송준비실 반출확인서</div>
+                </div>
+
+                <div class="receipt-info-row">
+                    <span class="label">대여일시</span>
+                    <span id="receipt-date">2024-00-00 00:00:00</span>
+                </div>
+                <div class="receipt-info-row">
+                    <span class="label">대여자</span>
+                    <span id="receipt-renter">홍길동</span>
+                </div>
+
+                <div class="receipt-divider"></div>
+
+                <table class="receipt-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 70%;">Items</th>
+                            <th style="width: 30%; text-align: right;">Qty</th>
+                        </tr>
+                    </thead>
+                    <tbody id="receipt-items-body">
+                        <!-- Items will be injected here -->
+                    </tbody>
+                </table>
+
+                <div class="receipt-total-section">
+                    <span>TOTAL ITEMS</span>
+                    <span id="receipt-total-qty">0</span>
+                </div>
+
+                <div class="receipt-signature-section">
+                    <div class="sig-box">
+                        <div class="sig-line"></div>
+                        <div>대여자 서명</div>
+                    </div>
+                    <div class="sig-box">
+                        <div class="sig-line"></div>
+                        <div>관리자 확인</div>
+                    </div>
+                </div>
+
+                <div class="receipt-footer-note">
+                    본 확인서는 GS SHOP 방송준비실에서의 샘플반출을 증명합니다.<br>
+
+                </div>
             </div>
         </div>
     </div>
@@ -1058,10 +1411,10 @@
 
         // 유의어 사전
         const SYNONYMS = {
-            '아우터': ['자켓', '점퍼', '코트', '패딩', '가디건', '재킷'],
+            '아우터': ['자켓', '점퍼', '코트', '패딩', '가디건', '재킷', '베스트', '다운'],
             '상의': ['티셔츠', '셔츠', '블라우스', '니트', '맨투맨', '티', '탑', 'top'],
             '하의': ['바지', '팬츠', '스커트', '치마', '슬랙스', '진', '데님'],
-            '원피스': ['드레스', '점프수트'],
+            '잡화': ['머플러', '백'],
             '악세사리': ['모자', '가방', '벨트', '양말', '스카프', '목도리']
         };
 
@@ -1527,7 +1880,8 @@
         function handleInventoryCellClick(event) {
             toggleCheckoutMode('rental');
             var cell = event.currentTarget;
-            addToCart(currentProductCode, cell.dataset.productName, cell.dataset.color, cell.dataset.size, parseInt(cell.dataset.qty), cell.dataset.sku);
+            var location = document.getElementById('product-location').textContent.trim();
+            addToCart(currentProductCode, cell.dataset.productName, cell.dataset.color, cell.dataset.size, parseInt(cell.dataset.qty), cell.dataset.sku, location);
         }
 
         function renderOutfits(productCode) {
@@ -1630,13 +1984,13 @@
                 .finally(function () { document.getElementById('confirm-outfit-btn').disabled = false; });
         }
 
-        function addToCart(productCode, productName, color, size, maxQty, skuCode) {
+        function addToCart(productCode, productName, color, size, maxQty, skuCode, location) {
             var existing = rentalCart.find(function (item) { return item.productCode === productCode && item.color === color && item.size === size; });
             if (existing) {
                 if (existing.quantity < maxQty) { existing.quantity++; showToast('수량: ' + existing.quantity); }
                 else { showToast('재고 초과'); }
             } else {
-                rentalCart.push({ productCode: productCode, productName: productName, color: color, size: size, skuCode: skuCode, quantity: 1, maxQty: maxQty, checked: true });
+                rentalCart.push({ productCode: productCode, productName: productName, color: color, size: size, skuCode: skuCode, quantity: 1, maxQty: maxQty, checked: true, location: location });
                 showToast('추가됨');
             }
             renderCart();
@@ -1756,12 +2110,32 @@
                         // 수량이 0 이하가 된 것은 필터링 (선택사항, UI 일관성을 위해)
                         appData.rawData = appData.rawData.filter(function (r) { return r.quantity > 0; });
 
+                        // 영수증 표시 전에 데이터 준비
+                        var receiptItems = checkedItems.map(function (item) {
+                            return {
+                                name: item.productName,
+                                details: item.color + ' / ' + item.size,
+                                quantity: item.quantity,
+                                location: item.location
+                            };
+                        });
+                        var now = new Date();
+                        var dateStr = now.getFullYear() + '-' +
+                            String(now.getMonth() + 1).padStart(2, '0') + '-' +
+                            String(now.getDate()).padStart(2, '0') + ' ' +
+                            String(now.getHours()).padStart(2, '0') + ':' +
+                            String(now.getMinutes()).padStart(2, '0') + ':' +
+                            String(now.getSeconds()).padStart(2, '0');
+
                         rentalCart = rentalCart.filter(function (item) { return !item.checked; });
                         renderCart();
                         document.getElementById('renter-name').value = '';
 
                         // 현재 보고 있는 상품의 재고표 즉시 갱신
                         if (currentProductCode) renderProductDetails(currentProductCode, document.getElementById('product-name').textContent);
+
+                        // 전자 영수증 표시
+                        showElectronicReceipt(renterName, receiptItems, dateStr);
                     } else { showToast('실패: ' + result.message); }
                 })
                 .catch(function (e) {
@@ -1769,6 +2143,66 @@
                     btn.classList.remove('btn-loading');
                     showToast('오류 발생');
                 });
+        }
+
+        function showElectronicReceipt(renter, items, date) {
+            document.getElementById('receipt-renter').textContent = renter;
+            document.getElementById('receipt-date').textContent = date;
+
+            var tbody = document.getElementById('receipt-items-body');
+            tbody.innerHTML = '';
+
+            // Grouping Logic
+            var groupedItems = {};
+            items.forEach(function (item) {
+                if (!groupedItems[item.name]) {
+                    groupedItems[item.name] = {
+                        location: item.location || '미지정',
+                        variants: []
+                    };
+                }
+                groupedItems[item.name].variants.push({
+                    details: item.details,
+                    quantity: item.quantity
+                });
+            });
+
+            var totalQty = 0;
+            for (var productName in groupedItems) {
+                var group = groupedItems[productName];
+                // Product Name Row (with Location)
+                var nameTr = document.createElement('tr');
+                nameTr.innerHTML = '<td colspan="2" class="product-group-header">' +
+                    productName +
+                    ' <span style="font-size: 12px; color: #888; font-weight: normal; margin-left:8px;">[' + group.location + ']</span>' +
+                    '</td>';
+                tbody.appendChild(nameTr);
+
+                // Variant Rows
+                group.variants.forEach(function (variant) {
+                    var varTr = document.createElement('tr');
+                    varTr.className = 'variant-row';
+                    varTr.innerHTML = '<td>' + variant.details + '</td>' +
+                        '<td class="qty-cell">' + variant.quantity + '</td>';
+                    tbody.appendChild(varTr);
+                    totalQty += variant.quantity;
+                });
+            }
+
+            document.getElementById('receipt-total-qty').textContent = totalQty;
+            document.getElementById('receipt-modal').classList.remove('hidden');
+
+            const escapeHandler = (e) => {
+                if (e.key === 'Escape') {
+                    closeReceiptModal();
+                    document.removeEventListener('keydown', escapeHandler);
+                }
+            };
+            document.addEventListener('keydown', escapeHandler);
+        }
+
+        function closeReceiptModal() {
+            document.getElementById('receipt-modal').classList.add('hidden');
         }
 
         function toggleCheckoutMode(mode) {
