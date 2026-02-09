@@ -901,15 +901,59 @@
             margin-top: 40px;
         }
 
-        .receipt-close-btn {
-            display: none;
-            /* Hide the old fixed button */
-        }
-
         .receipt-close-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3);
         }
+
+        /* --- 대량 출력 최적화 (Compact Mode) --- */
+        .receipt-container.compact {
+            padding: 30px 40px;
+            /* 상하 패딩 절감 */
+        }
+
+        .receipt-container.compact .receipt-header {
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+        }
+
+        .receipt-container.compact .receipt-logo {
+            font-size: 20px;
+        }
+
+        .receipt-container.compact .receipt-divider {
+            margin: 15px 0;
+        }
+
+        .receipt-container.compact .product-group-header {
+            padding-top: 10px !important;
+            font-size: 13px;
+        }
+
+        .receipt-container.compact .variant-row td {
+            padding: 3px 0 3px 15px !important;
+            font-size: 12px;
+        }
+
+        .receipt-container.compact .qty-cell {
+            font-size: 14px;
+        }
+
+        .receipt-container.compact .receipt-total-section {
+            padding: 10px 0;
+            font-size: 16px;
+            margin-top: 5px;
+        }
+
+        .receipt-container.compact .receipt-signature-section {
+            margin-top: 20px;
+        }
+
+        .receipt-container.compact .receipt-footer-note {
+            margin-top: 20px;
+        }
+
+        /* --------------------------------------- */
 
         @media print {
             @page {
@@ -2168,7 +2212,10 @@
             });
 
             var totalQty = 0;
+            var totalLines = 0; // 줄 수 계산 (헤더 + 상세)
+
             for (var productName in groupedItems) {
+                totalLines++; // 상품명(헤더) 줄 추가
                 var group = groupedItems[productName];
                 // Product Name Row (with Location)
                 var nameTr = document.createElement('tr');
@@ -2180,6 +2227,7 @@
 
                 // Variant Rows
                 group.variants.forEach(function (variant) {
+                    totalLines++; // 상세 내역 줄 추가
                     var varTr = document.createElement('tr');
                     varTr.className = 'variant-row';
                     varTr.innerHTML = '<td>' + variant.details + '</td>' +
@@ -2187,6 +2235,14 @@
                     tbody.appendChild(varTr);
                     totalQty += variant.quantity;
                 });
+            }
+
+            // --- 줄 수에 따른 압축 모드 적용 ---
+            const container = document.querySelector('.receipt-container');
+            if (totalLines > 13) {
+                container.classList.add('compact');
+            } else {
+                container.classList.remove('compact');
             }
 
             document.getElementById('receipt-total-qty').textContent = totalQty;
