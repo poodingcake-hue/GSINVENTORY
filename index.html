@@ -2192,6 +2192,11 @@
             document.getElementById('receipt-total-qty').textContent = totalQty;
             document.getElementById('receipt-modal').classList.remove('hidden');
 
+            // 화면이 그려진 후 아주 잠깐의 지연(100ms)을 두고 바로 인쇄창 호출
+            setTimeout(function () {
+                window.print();
+            }, 100);
+
             const escapeHandler = (e) => {
                 if (e.key === 'Escape') {
                     closeReceiptModal();
