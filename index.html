@@ -18,8 +18,8 @@
             --color-border-light: #e0e0e0;
             --color-danger: #dc3545;
             --color-danger-dark: #c82333;
-            --font-size-base: 14px;
-            --font-size-sm: 13px;
+            --font-size-base: 12px;
+            --font-size-sm: 11px;
         }
 
         /* 전체 레이아웃 */
@@ -40,7 +40,7 @@
         }
 
         .column {
-            padding: 20px;
+            padding: 12px;
             border-right: 1px solid var(--color-border-light);
             overflow-y: auto;
             background-color: var(--color-surface);
@@ -50,23 +50,23 @@
         }
 
         .column:nth-child(1) {
-            flex: 0 0 25%;
-            max-width: 25%;
-            min-width: 280px;
+            flex: 0 0 34%;
+            max-width: 34%;
+            min-width: 300px;
             background-color: #fdfdfd;
         }
 
         .column:nth-child(2) {
-            flex: 0 0 45%;
-            max-width: 45%;
-            min-width: 500px;
-            padding: 25px;
+            flex: 0 0 40%;
+            max-width: 40%;
+            min-width: 400px;
+            padding: 15px;
         }
 
         .column:nth-child(3) {
-            flex: 0 0 30%;
-            max-width: 30%;
-            min-width: 300px;
+            flex: 0 0 26%;
+            max-width: 26%;
+            min-width: 250px;
             border-right: none;
             background-color: #fafafa;
         }
@@ -89,7 +89,7 @@
         }
 
         h4 {
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: 600;
             margin: 0;
         }
@@ -125,20 +125,20 @@
         /* 1열: 브랜드 그리드 */
         .brand-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(5, 1fr);
             gap: 6px;
             margin-bottom: 20px;
         }
 
         .brand-item {
-            padding: 8px 4px;
+            padding: 6px 3px;
             border: 1px solid #ddd;
             border-radius: 4px;
             cursor: pointer;
             background-color: #fff;
             text-align: center;
             font-weight: 600;
-            font-size: 12.5px;
+            font-size: 11.5px;
             /* 6글자 수용을 위해 조정 */
             color: #555;
             transition: all 0.2s;
@@ -236,22 +236,30 @@
 
         #product-image-container {
             margin-bottom: 20px;
-            display: flex;
-            justify-content: center;
-            background: #fcfcfc;
+            background: #fff;
             border-radius: 8px;
             overflow: hidden;
             border: 1px solid #f0f0f0;
+            height: 45vh; /* 높이 45vh 고정 유지 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .main-image-wrapper {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         #product-image {
             max-width: 100%;
-            height: auto;
-            max-height: 400px;
+            max-height: 100%;
             object-fit: contain;
             display: block;
-            transition: opacity 0.3s ease-in-out;
-            will-change: opacity;
+            transition: opacity 0.3s ease;
         }
 
         .fade-in {
@@ -290,7 +298,7 @@
             background-color: #f8f9fa;
             font-weight: 600;
             color: #555;
-            border-bottom: 2px solid #ddd;
+            border-bottom: 1px solid #e0e0e0;
         }
 
         .inventory-table td {
@@ -354,6 +362,31 @@
             border-bottom: 1px solid #eee;
         }
 
+        .grid-header h4 {
+            white-space: nowrap;
+            margin: 0;
+        }
+
+        .edit-btn {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+            color: #333;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.2s;
+        }
+
+        .edit-btn:hover {
+            background-color: #f8f9fa;
+            border-color: #bbb;
+        }
+
         .outfit-pair {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -401,7 +434,7 @@
 
         .toggle-buttons button {
             flex: 1;
-            padding: 12px;
+            padding: 7px 12px;
             border: 1px solid #ddd;
             background: #fff;
             color: #555;
@@ -462,7 +495,7 @@
         }
 
         .col-chk {
-            flex: 0 0 35px;
+            flex: 0 0 32px;
             border-right: 1px solid #eee;
             height: 100%;
             display: flex;
@@ -471,7 +504,7 @@
         }
 
         .col-renter {
-            flex: 0 0 70px;
+            flex: 0 0 48px;
             font-weight: 600;
             color: #333;
             border-right: 1px solid #eee;
@@ -479,6 +512,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 0.9em;
         }
 
         .col-main {
@@ -507,7 +541,7 @@
         }
 
         .col-qty {
-            flex: 0 0 45px;
+            flex: 0 0 32px;
             color: var(--color-danger);
             font-weight: 700;
             border-left: 1px solid #eee;
@@ -518,7 +552,7 @@
         }
 
         .col-date {
-            flex: 0 0 85px;
+            flex: 0 0 42px;
             color: #888;
             font-size: 0.78em;
             border-left: 1px solid #eee;
@@ -593,6 +627,33 @@
             padding: 15px 20px;
             border-top: 1px solid #dee2e6;
             text-align: right;
+        }
+
+        /* 이미지 풀스크린 뷰어 */
+        #image-viewer-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 10000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            cursor: zoom-out;
+        }
+
+        #image-viewer-modal.visible {
+            display: flex;
+        }
+
+        #viewer-img {
+            max-width: 95%;
+            max-height: 95%;
+            object-fit: contain;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+            border-radius: 4px;
         }
 
         .modal-btn {
@@ -1084,11 +1145,22 @@
         /* 3열 반납 검색 레이아웃 개편 */
         .return-search-bar {
             display: flex;
-            align-items: center;
-            gap: 8px;
+            flex-direction: column;
+            gap: 10px;
             margin-bottom: 20px;
             background: #fff;
             padding: 5px 0;
+        }
+
+        .search-execute-btn {
+            padding: 8px 12px;
+            background: #6c757d;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+            white-space: nowrap;
         }
 
         .return-search-input-group {
@@ -1223,27 +1295,48 @@
 
     <div class="container">
         <div id="col1" class="column">
-            <h2>브랜드 및 상품 선택</h2>
-            <div id="brand-list" class="brand-grid">
-                <div class="loader">브랜드 목록 로딩 중...</div>
-            </div>
-            <hr>
-            <div class="header-with-search">
-                <h3><span id="selected-brand-name">브랜드 선택</span></h3>
-                <div id="product-search-container" class="product-search-container" style="display:none;">
-                    <input type="text" id="product-search-input" class="product-search-input" placeholder="검색">
-                    <button id="product-search-btn" class="small-search-btn">조회</button>
+            <div class="sticky-header">
+                <div class="toggle-buttons" style="margin-bottom: 0;">
+                    <button id="view-brand" class="active">브랜드 선택</button>
+                    <button id="view-live">편성내역</button>
                 </div>
             </div>
-            <div id="product-list">
-                <div class="loader">브랜드를 선택하면 상품 목록이 표시됩니다.</div>
+
+            <div id="brand-selection-view">
+                <div id="brand-list" class="brand-grid">
+                    <div class="loader">브랜드 목록 로딩 중...</div>
+                </div>
+                <hr>
+                <div class="header-with-search">
+                    <h3><span id="selected-brand-name">브랜드 선택</span></h3>
+                    <div id="product-search-container" class="product-search-container" style="display:none;">
+                        <input type="text" id="product-search-input" class="product-search-input" placeholder="검색">
+                        <button id="product-search-btn" class="small-search-btn">조회</button>
+                    </div>
+                </div>
+                <div id="product-list">
+                    <div class="loader">브랜드를 선택하면 상품 목록이 표시됩니다.</div>
+                </div>
+            </div>
+
+            <div id="live-selection-view" class="hidden">
+                <div id="live-time-list">
+                    <div class="loader">편성 데이터를 불러오는 중...</div>
+                </div>
+                <hr>
+                <div id="live-product-list">
+                    <div class="loader">시간을 선택하면 해당 방송 상품이 표시됩니다.</div>
+                </div>
             </div>
         </div>
 
         <div id="col2" class="column">
             <div id="product-details-content" class="hidden">
                 <div id="product-image-container">
-                    <img id="product-image" src="" alt="상품 이미지">
+                    <div class="main-image-wrapper">
+                        <img id="product-image" src="" alt="상품 이미지">
+                    </div>
+                    <div id="product-gallery" class="image-gallery hidden"></div>
                 </div>
                 <div class="info-header">
                     <span id="product-location" class="info-location" title="클릭하여 위치 수정"></span>
@@ -1303,17 +1396,20 @@
                 <h3 class="section-header-with-line">반납 내역 조회</h3>
                 <div class="return-search-bar">
                     <div class="return-search-input-group">
-                        <div class="search-input-wrapper">
+                        <div class="search-input-wrapper" style="flex: 1; position: relative;">
                             <input type="text" id="unified-search-input" class="unified-search-input"
-                                placeholder="브랜드/대여자 검색">
+                                placeholder="브랜드/대여자 검색" style="width: 100%; box-sizing: border-box;">
                             <div id="search-suggestions" class="suggestions-box"></div>
                         </div>
-                        <button id="search-execute-btn" class="search-execute-btn">조회</button>
+                        <button id="search-execute-btn" class="search-execute-btn" onclick="executeSearch()">조회</button>
                     </div>
-                    <label class="select-all-wrapper">
-                        <input type="checkbox" id="select-all-return-chk" class="select-all-checkbox">
-                        전체 선택 <span id="return-list-count"></span>
-                    </label>
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 5px 0;">
+                        <label class="select-all-wrapper">
+                            <input type="checkbox" id="select-all-return-chk" class="select-all-checkbox"
+                                onchange="toggleAllReturnItems(this.checked)">
+                            전체 선택 <span id="return-list-count"></span>
+                        </label>
+                    </div>
                 </div>
                 <div id="return-list-container">
                     <div class="return-list-header">
@@ -1462,10 +1558,138 @@
             '악세사리': ['모자', '가방', '벨트', '양말', '스카프', '목도리']
         };
 
+        const cleanCode = (v) => {
+            if (!v) return "";
+            let s = String(v).trim().replace(/,/g, '').split('.')[0];
+            return s.replace(/[^0-9a-zA-Z-]/g, '').trim();
+        };
+
         document.addEventListener('DOMContentLoaded', function () {
             initializeApp();
             setupEventListeners();
         });
+
+        function toggleCol1Mode(mode) {
+            const brandBtn = document.getElementById('view-brand');
+            const liveBtn = document.getElementById('view-live');
+            const brandView = document.getElementById('brand-selection-view');
+            const liveView = document.getElementById('live-selection-view');
+
+            if (mode === 'brand') {
+                brandBtn.classList.add('active');
+                liveBtn.classList.remove('active');
+                brandView.classList.remove('hidden');
+                liveView.classList.add('hidden');
+            } else {
+                liveBtn.classList.add('active');
+                brandBtn.classList.remove('active');
+                liveView.classList.remove('hidden');
+                brandView.classList.add('hidden');
+                renderLiveTimeList();
+            }
+        }
+
+        function renderLiveTimeList() {
+            console.log('renderLiveTimeList 호출됨. 데이터 상태:', appData ? (appData.liveData ? appData.liveData.length : 'liveData 없음') : 'appData 없음');
+            const div = document.getElementById('live-time-list');
+            div.innerHTML = '';
+            if (!appData || !appData.liveData || !appData.liveData.length) {
+                div.innerHTML = '<div class="loader">편성 데이터가 없습니다. (배포 확인 필요)</div>';
+                return;
+            }
+
+            // 고유 시간값 추출
+            const times = [...new Set(appData.liveData.map(item => item.time))].sort();
+            console.log('추출된 방송 시간들:', times);
+
+            const grid = document.createElement('div');
+            grid.className = 'brand-grid'; // 재사용
+
+            times.forEach(time => {
+                const item = document.createElement('div');
+                item.className = 'brand-item'; // 재사용
+                item.style.fontSize = '10px';
+
+                // 날짜 포맷팅: yyyy-MM-dd HH:mm -> M/d(요일) HH:mm
+                let displayTime = time.substring(5);
+                try {
+                    const d = new Date(time.replace(/-/g, '/'));
+                    const days = ['일', '월', '화', '수', '목', '금', '토'];
+                    displayTime = `${d.getMonth() + 1}/${d.getDate()}(${days[d.getDay()]}) ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+                } catch (e) { }
+
+                item.textContent = displayTime;
+                item.title = time;
+                item.onclick = function () {
+                    const allTimes = div.querySelectorAll('.brand-item');
+                    allTimes.forEach(t => t.classList.remove('selected'));
+                    item.classList.add('selected');
+                    renderLiveProductList(time);
+                };
+                grid.appendChild(item);
+            });
+            div.appendChild(grid);
+        }
+
+        function renderLiveProductList(selectedTime) {
+            const div = document.getElementById('live-product-list');
+            div.innerHTML = '';
+
+            // 데이터 추출 및 정렬 (1순위: 방송순서 숫자, 2순위: 주상품 우선)
+            const products = (appData.liveData || [])
+                .filter(item => item.time === selectedTime)
+                .sort((a, b) => {
+                    if (a.order !== b.order) return a.order - b.order;
+                    if (a.type === '주상품' && b.type !== '주상품') return -1;
+                    if (a.type !== '주상품' && b.type === '주상품') return 1;
+                    return 0;
+                });
+
+            if (!products.length) {
+                div.innerHTML = '<div class="loader">상품 내역이 없습니다.</div>';
+                return;
+            }
+
+            const fragment = document.createDocumentFragment();
+            products.forEach(product => {
+                const item = document.createElement('div');
+                item.className = 'product-item';
+                if (currentProductCode === product.productCode) item.classList.add('selected');
+
+                const nameSpan = document.createElement('span');
+                nameSpan.className = 'product-name';
+
+                // 주상품인 경우 앞에 순서 숫자 표기, 보조상품인 경우 빈칸 처리
+                let displayName = '';
+                if (product.type === '주상품') {
+                    // 순서가 999(미지정)가 아니면 숫자 표시
+                    const orderDisplay = product.order === 999 ? '' : product.order;
+                    displayName = `<span style="display:inline-block; width:20px; font-weight:bold; color:#e06666;">${orderDisplay}</span>${product.productName}`;
+                } else {
+                    // 보조상품은 숫자 없이 여백만
+                    displayName = `<span style="display:inline-block; width:20px;">&nbsp;</span>${product.productName}`;
+                }
+                nameSpan.innerHTML = displayName;
+
+                const codeSpan = document.createElement('span');
+                codeSpan.className = 'product-code';
+                codeSpan.textContent = product.productCode;
+
+                item.appendChild(nameSpan);
+                item.appendChild(codeSpan);
+
+                item.onmouseenter = function () { preloadProductImage(product.productCode); };
+                item.onclick = function () {
+                    const allItems = div.querySelectorAll('.product-item');
+                    allItems.forEach(i => i.classList.remove('selected'));
+                    item.classList.add('selected');
+                    selectProduct(product.productCode, item, product.productName);
+                };
+
+                fragment.appendChild(item);
+            });
+            div.appendChild(fragment);
+        }
 
         function initializeApp() {
             // [수정] 로컬 스토리지에서 이전 데이터 먼저 불러오기 (초고속 초기 렌더링)
@@ -1494,7 +1718,10 @@
                     }
 
                     appData = data;
+                    console.log('초기 데이터 로드 완료:', appData);
                     if (!appData.notes) appData.notes = {};
+                    if (!appData.liveData) appData.liveData = [];
+                    if (!appData.images) appData.images = {};
 
                     // 최신 데이터로 로컬 스토리지 업데이트
                     localStorage.setItem('inventory_app_data', JSON.stringify(data));
@@ -1505,6 +1732,13 @@
                         renderProductList(currentBrand);
                     }
 
+                    // 편성표 탭이 이미 활성화되어 있다면 즉시 렌더링
+                    const liveView = document.getElementById('live-selection-view');
+                    if (liveView && !liveView.classList.contains('hidden')) {
+                        console.log('편성내역 뷰 초기 렌더링 시도');
+                        renderLiveTimeList();
+                    }
+
                     // [속도 향상] 모든 상품 이미지 백그라운드 전체 로딩 시작
                     startGlobalImagePreload();
 
@@ -1513,7 +1747,12 @@
                 .catch(function (error) {
                     console.error('데이터 로드 오류:', error);
                     // 캐시조차 없는 경우에만 경고
-                    if (!appData) alert('데이터를 불러오지 못했습니다. 네트워크를 확인해주세요.');
+                    if (!appData) {
+                        const brandList = document.getElementById('brand-list');
+                        const liveList = document.getElementById('live-time-list');
+                        if (brandList) brandList.innerHTML = '<div class="loader">데이터를 불러오지 못했습니다.</div>';
+                        if (liveList) liveList.innerHTML = '<div class="loader">데이터를 불러오지 못했습니다.</div>';
+                    }
                 });
         }
 
@@ -1540,7 +1779,7 @@
         }
 
         // GAS Web App URL
-        const API_URL = "https://script.google.com/macros/s/AKfycbwUhg-Wra36tHNgQ9Ql8BPSMj8LfEF8n-cww7WpoNtujVI3hWb0un9iWx3JhLvMaEM5/exec";
+        const API_URL = "https://script.google.com/macros/s/AKfycby25D3uTH45-7s1m1bUzeyMUTjUQ5RN6fUi4K89kMAlHKWOLFQ0BJSFId9okf46gvlw/exec";
 
         function callBackend(funcName) {
             console.log('Back-end Request:', funcName);
@@ -1575,6 +1814,9 @@
         }
 
         function setupEventListeners() {
+            if (document.getElementById('view-brand')) document.getElementById('view-brand').onclick = function () { toggleCol1Mode('brand'); };
+            if (document.getElementById('view-live')) document.getElementById('view-live').onclick = function () { toggleCol1Mode('live'); };
+
             if (document.getElementById('toggle-rental')) document.getElementById('toggle-rental').onclick = function () { toggleCheckoutMode('rental'); };
             if (document.getElementById('toggle-return')) document.getElementById('toggle-return').onclick = function () { toggleCheckoutMode('return'); };
 
@@ -1756,7 +1998,8 @@
         function preloadProductImage(productCode) {
             if (!productCode || preloadedImages.has(productCode)) return;
 
-            var sheetImageUrl = appData.images[productCode];
+            var cleaned = cleanCode(productCode);
+            var sheetImageUrl = appData.images[cleaned];
             var finalImageUrl = generateGsShopUrl(productCode);
 
             if (sheetImageUrl) {
@@ -1779,7 +2022,7 @@
         }
 
         function selectProduct(productCode, element, productName) {
-            if (currentProductCode === productCode) return;
+            console.log('상품 선택 시도:', productCode, productName);
             currentProductCode = productCode;
             var items = document.querySelectorAll('.product-item');
             for (var i = 0; i < items.length; i++) { items[i].classList.remove('selected'); }
@@ -1832,57 +2075,38 @@
         }
 
         function renderProductDetails(productCode, productName) {
+            console.log('Rendering details for:', productCode);
+            currentProductCode = productCode;
+            
             document.getElementById('col2-placeholder').classList.add('hidden');
             document.getElementById('product-details-content').classList.remove('hidden');
 
             var inventoryData = appData.rawData.filter(function (item) { return item.productCode === productCode && item.quantity > 0; });
 
-            // --- 초고속 이미지 로딩 로직 (Direct Drive Link) ---
-            var singleImg = document.getElementById('product-image');
-            var sheetImageUrl = appData.images[productCode];
-            var webImageUrl = generateGsShopUrl(productCode);
+            const singleImg = document.getElementById('product-image');
+            const galleryDiv = document.getElementById('product-gallery');
+            galleryDiv.innerHTML = '';
+            galleryDiv.classList.add('hidden');
+            
+            const cleaned = cleanCode(productCode);
+            const sheetImageUrl = appData.images[cleaned];
 
-            console.log("Rendering Image for Product:", productCode);
-
-            // 이미지 소스 결정 우선순위: 1. 구글 시트 드라이브 주소(직접) -> 2. GS SHOP 웹 이미지
-            var finalImageUrl = webImageUrl;
-
+            // 1. 이미지 설정 (시트 이미지 우선, 없으면 기본 웹 이미지)
             if (sheetImageUrl) {
+                let finalUrl = sheetImageUrl;
                 if (sheetImageUrl.indexOf('drive.google.com') !== -1) {
-                    // 구글 드라이브 ID 추출
-                    var fileId = "";
-                    var match = sheetImageUrl.match(/\/d\/([a-zA-Z0-9_-]+)/) ||
-                        sheetImageUrl.match(/[?&]id=([a-zA-Z0-9_-]+)/) ||
-                        sheetImageUrl.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) ||
-                        sheetImageUrl.match(/\/open\?id=([a-zA-Z0-9_-]+)/);
-                    if (match && match[1]) {
-                        // 썸네일 서버 주소 사용 (uc 링크보다 훨씬 빠르고 차단 위험이 적음)
-                        finalImageUrl = 'https://lh3.googleusercontent.com/d/' + match[1];
-                    }
-                } else {
-                    // 드라이브가 아닌 일반 URL인 경우 그대로 사용
-                    finalImageUrl = sheetImageUrl;
+                    var matchId = sheetImageUrl.match(/\/d\/([a-zA-Z0-9_-]+)/) ||
+                                 sheetImageUrl.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+                    if (matchId && matchId[1]) finalUrl = 'https://lh3.googleusercontent.com/d/' + matchId[1];
                 }
+                singleImg.src = finalUrl;
+            } else {
+                singleImg.src = generateGsShopUrl(productCode, '_B1');
             }
+            singleImg.classList.add('fade-in');
+            galleryDiv.classList.add('hidden'); // 갤러리 숨김
 
-            // 이미지 표시 (페이드 애니메이션 적용)
-            if (singleImg.src !== finalImageUrl) {
-                singleImg.classList.remove('fade-in');
-                singleImg.src = finalImageUrl || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
-                void singleImg.offsetWidth;
-                singleImg.classList.add('fade-in');
-            }
-
-            // 이미지 로드 에러 발생 시 최종 Fallback
-            singleImg.onerror = function () {
-                var currentSrc = String(this.src);
-                if (currentSrc !== webImageUrl && webImageUrl) {
-                    this.src = webImageUrl;
-                }
-            };
-            // ---------------------------
-
-            var location = inventoryData[0] ? inventoryData[0].location : 'N/A';
+            var location = (inventoryData[0] ? inventoryData[0].location : 'N/A');
             var displayName = (inventoryData[0] ? inventoryData[0].productName : productName);
 
             document.getElementById('product-location').textContent = ' ' + location;
@@ -1897,6 +2121,16 @@
 
             renderOutfits(productCode);
             renderRentalHistory(productCode);
+        }
+
+        // URL 생성 함수 확장
+        function generateGsShopUrl(productCode, suffix) {
+            if (!productCode || productCode.length < 6) return null;
+            const p1 = productCode.substring(0, 2);
+            const p2 = productCode.substring(2, 4);
+            const p3 = productCode.substring(4, 6);
+            const s = suffix || '_B1';
+            return 'https://image.gsshop.com/image/' + p1 + '/' + p2 + '/' + p3 + '/' + productCode + s + '.jpg';
         }
 
 
@@ -2405,7 +2639,12 @@
                 mainCol.appendChild(titleDiv); mainCol.appendChild(subDiv);
 
                 var qtyCol = document.createElement('div'); qtyCol.className = 'col-qty'; qtyCol.textContent = Math.abs(item.quantity);
-                var dateCol = document.createElement('div'); dateCol.className = 'col-date'; dateCol.textContent = (item.rentalDate || '').split(' ')[0];
+
+                // 날짜 포맷 변경: YYYY-MM-DD -> MM/DD
+                var fullDate = (item.rentalDate || '').split(' ')[0];
+                var dateParts = fullDate.split('-');
+                var displayDate = dateParts.length >= 3 ? dateParts[1] + '/' + dateParts[2] : fullDate;
+                var dateCol = document.createElement('div'); dateCol.className = 'col-date'; dateCol.textContent = displayDate;
 
                 itemDiv.appendChild(checkboxCol);
                 itemDiv.appendChild(renterCol);
