@@ -3,6 +3,8 @@
 
 <head>
     <base target="_top">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
     <style>
         @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css");
 
@@ -20,7 +22,34 @@
             --color-danger-dark: #c82333;
             --font-size-base: 12px;
             --font-size-sm: 11px;
+            --color-copy-bg: #f8f9fa;
         }
+
+        /* 복사 버튼 스타일 */
+        .copy-emoji-btn {
+            cursor: pointer;
+            margin-left: 10px;
+            vertical-align: middle;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            opacity: 0.6;
+        }
+
+        .copy-emoji-btn:hover {
+            transform: scale(1.1);
+            opacity: 1;
+        }
+
+        .copy-emoji-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+
 
         /* 전체 레이아웃 */
         body {
@@ -240,7 +269,8 @@
             border-radius: 8px;
             overflow: hidden;
             border: 1px solid #f0f0f0;
-            height: 45vh; /* 높이 45vh 고정 유지 */
+            height: 45vh;
+            /* 높이 45vh 고정 유지 */
             display: flex;
             align-items: center;
             justify-content: center;
@@ -1433,6 +1463,19 @@
         </div>
     </div>
 
+    <!-- 캡쳐용 히든 컨테이너 -->
+    <div id="capture-container">
+        <div class="capture-left">
+            <div id="capture-product-name" class="capture-title"></div>
+            <div id="capture-table-container"></div>
+        </div>
+        <div class="capture-right">
+            <img id="capture-product-image" class="capture-image" src="" alt="">
+            <div id="capture-product-code" class="capture-code"></div>
+        </div>
+    </div>
+
+
     <div id="outfit-input-modal" class="modal-overlay hidden">
         <div class="modal">
             <div class="modal-header">
@@ -2015,7 +2058,9 @@
 
             if (finalImageUrl) {
                 var img = new Image();
+                img.crossOrigin = "anonymous";
                 img.src = finalImageUrl;
+
                 preloadedImages.add(productCode);
                 console.log("Preloading image for:", productCode);
             }
@@ -2077,7 +2122,7 @@
         function renderProductDetails(productCode, productName) {
             console.log('Rendering details for:', productCode);
             currentProductCode = productCode;
-            
+
             document.getElementById('col2-placeholder').classList.add('hidden');
             document.getElementById('product-details-content').classList.remove('hidden');
 
@@ -2087,7 +2132,7 @@
             const galleryDiv = document.getElementById('product-gallery');
             galleryDiv.innerHTML = '';
             galleryDiv.classList.add('hidden');
-            
+
             const cleaned = cleanCode(productCode);
             const sheetImageUrl = appData.images[cleaned];
 
@@ -2096,13 +2141,17 @@
                 let finalUrl = sheetImageUrl;
                 if (sheetImageUrl.indexOf('drive.google.com') !== -1) {
                     var matchId = sheetImageUrl.match(/\/d\/([a-zA-Z0-9_-]+)/) ||
-                                 sheetImageUrl.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+                        sheetImageUrl.match(/[?&]id=([a-zA-Z0-9_-]+)/);
                     if (matchId && matchId[1]) finalUrl = 'https://lh3.googleusercontent.com/d/' + matchId[1];
                 }
                 singleImg.src = finalUrl;
             } else {
                 singleImg.src = generateGsShopUrl(productCode, '_B1');
             }
+            // 주의: UI 이미지(singleImg)에는 crossOrigin을 설정하지 않습니다 (GS이미지가 CORS를 지원하지 않아 엑박 발생 가능).
+            // 캡처 함수에서 별도로 프록시 처리합니다.
+
+
             singleImg.classList.add('fade-in');
             galleryDiv.classList.add('hidden'); // 갤러리 숨김
 
@@ -2111,7 +2160,14 @@
 
             document.getElementById('product-location').textContent = ' ' + location;
             document.getElementById('product-location').onclick = editProductLocation;
-            document.getElementById('product-name').textContent = displayName;
+
+            const nameEl = document.getElementById('product-name');
+            nameEl.textContent = displayName;
+
+            // 기존에 상품명 옆에 있던 복사 버튼은 이제 테이블 안으로 이동하므로 삭제합니다.
+            const oldBtn = document.querySelector('.copy-emoji-btn');
+            if (oldBtn) oldBtn.remove();
+
 
             if (inventoryData.length) {
                 renderInventoryMatrix(inventoryData, displayName);
@@ -2148,7 +2204,17 @@
 
             if (!colors.length || !sizes.length) { container.innerHTML = '<div class="loader">정보 없음</div>'; return; }
 
-            var html = '<table class="inventory-table"><thead><tr><th>　</th>';
+            // 세련된 라인형 복사 아이콘을 테이블 헤더에 삽입 ('색상\\사이즈' 대체)
+            var copyIconSvg = `
+                <span class="copy-emoji-btn" title="재고 이미지 복사" onclick="event.stopPropagation(); copyProductSummaryToClipboard();" style="display:inline-flex; width: 100%; height: 100%; align-items:center; justify-content:center; cursor:pointer;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 20px; height: 20px;">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                </span>`;
+
+            var html = '<table class="inventory-table"><thead><tr><th style="padding: 0; text-align: center; vertical-align: middle;">' + copyIconSvg + '</th>';
+
             sizes.forEach(function (size) { html += '<th>' + size + '</th>'; });
             html += '</tr></thead><tbody>';
 
@@ -2800,7 +2866,131 @@
             }
             setTimeout(function () { if (container.parentNode) container.parentNode.removeChild(container); }, 3500);
         }
+
+        async function copyProductSummaryToClipboard() {
+            if (!currentProductCode) return;
+
+            showToast('재고 이미지 생성 중...');
+
+            const displayName = document.getElementById('product-name').textContent;
+            const productImage = document.getElementById('product-image');
+            const inventoryTable = document.querySelector('.inventory-table');
+
+            if (!inventoryTable) { showToast('재고 정보 없음'); return; }
+
+            // 1. 이미지 URL 처리 (CORS 문제 해결을 위해 캡처 시에만 프록시 적용)
+            let rawImgUrl = productImage.src;
+            let finalImgUrl = `https://images.weserv.nl/?url=${encodeURIComponent(rawImgUrl)}&w=400`;
+
+            // 구글 드라이브 주소인 경우 이미 최적화된 고퀄리티 주소(lh3)로 변환하여 프록시 전달
+            if (rawImgUrl.includes('drive.google.com') || rawImgUrl.includes('googleusercontent.com')) {
+                const idMatch = rawImgUrl.match(/\/d\/([^/]+)/) || rawImgUrl.match(/id=([^&]+)/);
+                if (idMatch) finalImgUrl = `https://images.weserv.nl/?url=${encodeURIComponent('https://lh3.googleusercontent.com/d/' + idMatch[1])}&w=400`;
+            }
+
+            // 2. 고정 규격 캡처용 DOM 생성 (650x260 고정)
+            const captureDiv = document.createElement('div');
+            captureDiv.style.cssText = `
+                position: absolute; left: -9999px; top: -9999px;
+                display: flex; width: 650px; height: 260px; background: white; 
+                padding: 20px; border: 1px solid #e2e8f0; font-family: sans-serif; 
+                box-sizing: border-box; overflow: hidden;
+            `;
+
+            // 테이블 폰트 사이즈 계산 (행/열 수에 따라 공간을 꽉 채우도록 자동 조절)
+            const rowCount = inventoryTable.querySelectorAll('tr').length;
+            const colCount = inventoryTable.querySelectorAll('th').length;
+            let fontSize = "14px";
+
+            // 데이터가 적을수록 더 크게 노출 (가독성 향상)
+            if (rowCount <= 4 && colCount <= 5) fontSize = "18px";
+            else if (rowCount <= 6 && colCount <= 7) fontSize = "16px";
+            else if (rowCount <= 8 && colCount <= 8) fontSize = "14px";
+            else if (rowCount <= 10 && colCount <= 10) fontSize = "11px";
+            else fontSize = "9px";
+
+            captureDiv.innerHTML = `
+                <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; min-width: 0; padding-right: 15px; padding-bottom: 5px;">
+                    <div style="font-size: 19px; font-weight: 900; color: #1e293b; margin-bottom: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                        ${displayName}
+                    </div>
+                    <div id="capture-table-wrapper" style="width: 100%; font-size: ${fontSize};">
+                        ${inventoryTable.outerHTML}
+                    </div>
+                </div>
+                <div style="width: 210px; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; border-left: 1px dashed #e2e8f0; padding: 0 5px 0 15px;">
+                    <div style="flex: 1; display: flex; align-items: center; justify-content: center; width: 100%; overflow: hidden;">
+                        <img src="${finalImgUrl}" crossorigin="anonymous" style="width: 100%; height: 100%; object-fit: contain;">
+                    </div>
+                    <div style="font-size: 14px; color: #94a3b8; font-weight: 700; margin-top: 5px;">${currentProductCode}</div>
+                </div>
+            `;
+
+            const style = document.createElement('style');
+            style.innerHTML = `
+                #capture-table-wrapper table { border-collapse: collapse; width: 100%; border: 1px solid #eef1f6; }
+                #capture-table-wrapper th, #capture-table-wrapper td { border: 1px solid #eef1f6; padding: 7px 4px; text-align: center; color: #334155; }
+                #capture-table-wrapper th { background: #fbfcfd; font-weight: bold; color: #475569; }
+                #capture-table-wrapper thead th:first-child { color: #888; font-size: 0.8em; }
+            `;
+            captureDiv.appendChild(style);
+
+            // 캡처용 이미지에서는 헤더의 복사 버튼 아이콘 영역을 비워둡니다.
+            const firstHeader = captureDiv.querySelector('#capture-table-wrapper thead th:first-child');
+            if (firstHeader) firstHeader.innerHTML = '';
+
+            document.body.appendChild(captureDiv);
+
+            try {
+                const targetImg = captureDiv.querySelector('img');
+                await new Promise((resolve) => {
+                    if (targetImg.complete) resolve();
+                    else { targetImg.onload = resolve; targetImg.onerror = resolve; }
+                });
+
+                const canvas = await html2canvas(captureDiv, {
+                    useCORS: true,
+                    scale: 2,
+                    backgroundColor: '#ffffff',
+                    width: 650,
+                    height: 260
+                });
+
+                canvas.toBlob(async (blob) => {
+                    if (!blob) throw new Error('Blob creation failed');
+                    try {
+                        const data = [new ClipboardItem({ 'image/png': blob })];
+                        await navigator.clipboard.write(data);
+                        showToast('재고 이미지 복사 완료! 📋', true);
+                        // 복사 성공 시 테이블 내 버튼 애니메이션 처리
+                        const btn = document.querySelector('.inventory-table thead th:first-child .copy-emoji-btn');
+                        if (btn) {
+                            const successIcon = `
+                                <svg viewBox="0 0 24 24" fill="none" stroke="#28a745" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px;">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>`;
+                            const originalIcon = btn.innerHTML;
+                            btn.innerHTML = successIcon;
+                            btn.style.opacity = "1";
+                            setTimeout(() => { btn.innerHTML = originalIcon; btn.style.opacity = "0.6"; }, 2000);
+                        }
+                    } catch (err) {
+                        showToast('이미지 복사 실패');
+                    }
+                    document.body.removeChild(captureDiv);
+                }, 'image/png');
+            } catch (err) {
+                console.error(err);
+                showToast('이미지 생성 실패');
+                document.body.removeChild(captureDiv);
+            }
+        }
+
+
+
+
     </script>
+
 </body>
 
 </html>
