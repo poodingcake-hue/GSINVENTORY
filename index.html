@@ -2873,7 +2873,7 @@
             showToast('재고 이미지 생성 중...');
 
             const displayName = document.getElementById('product-name').textContent;
-            const locationName = document.querySelector('.info-location').textContent;
+            const locationName = document.querySelector('.info-location').textContent.trim();
             const productImage = document.getElementById('product-image');
             const inventoryTable = document.querySelector('.inventory-table');
 
@@ -2915,7 +2915,7 @@
                     <!-- Left Section (72%): Header + Table -->
                     <div style="flex: 0 0 72%; display: flex; flex-direction: column; justify-content: center; padding-right: 0px; box-sizing: border-box;">
                         <div style="font-size: 26px; font-weight: 900; color: #1e293b; margin-bottom: 12px; white-space: normal; word-break: keep-all; line-height: 1.3;">
-                            ${displayName} <span style="font-size: 26px; color: #1e293b; font-weight: 900; margin-left: 8px;">[${locationName}]</span>
+                            ${displayName} <span style="font-size: 26px; color: #1e293b; font-weight: 900; margin-left: 5px;">[${locationName}]</span>
                         </div>
                         <div id="capture-table-wrapper" style="width: 100%; font-size: ${fontSize};">
                             ${inventoryTable.outerHTML}
