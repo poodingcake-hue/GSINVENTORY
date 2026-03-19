@@ -2153,6 +2153,11 @@
 
 
             singleImg.classList.add('fade-in');
+            singleImg.style.cursor = 'pointer';
+            singleImg.title = 'GS SHOP 상세페이지 열기';
+            singleImg.onclick = function () {
+                window.open('https://www.gsshop.com/prd/prd.gs?prdid=' + productCode, '_blank');
+            };
             galleryDiv.classList.add('hidden'); // 갤러리 숨김
 
             var location = (inventoryData[0] ? inventoryData[0].location : 'N/A');
