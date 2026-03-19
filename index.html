@@ -2894,7 +2894,7 @@
             captureDiv.style.cssText = `
                 position: absolute; left: -9999px; top: -9999px;
                 display: flex; flex-direction: column; justify-content: center; width: 790px; height: 269px; 
-                padding: 10px; border: 1px solid #e2e8f0; font-family: sans-serif; 
+                padding: 10px; border: none; font-family: sans-serif; 
                 box-sizing: border-box; background: transparent;
             `;
 
@@ -2933,8 +2933,8 @@
 
             const style = document.createElement('style');
             style.innerHTML = `
-                #capture-table-wrapper table { border-collapse: collapse; width: 100%; border: 1px solid #eef1f6; table-layout: fixed; background: transparent; }
-                #capture-table-wrapper th, #capture-table-wrapper td { border: 1px solid #eef1f6; padding: 3px 1px; text-align: center; color: #334155; font-weight: bold; background: transparent; }
+                #capture-table-wrapper table { border-collapse: collapse; width: 100%; border: 1px solid #eef1f6; table-layout: auto; background: transparent; }
+                #capture-table-wrapper th, #capture-table-wrapper td { border: 1px solid #eef1f6; padding: 3px 1px; text-align: center; color: #334155; font-weight: bold; background: transparent; white-space: nowrap; }
                 #capture-table-wrapper th { background: rgba(0,0,0,0.03); color: #475569; }
                 #capture-table-wrapper thead th:first-child { color: #888; font-size: 0.8em; }
             `;
@@ -2969,7 +2969,7 @@
                         }
                     }
                     ctxTmp.putImageData(imgData, 0, 0);
-                    
+
                     // 신규 소스(투명 PNG) 적용 후 로딩 대기
                     await new Promise((resolve) => {
                         targetImg.onload = resolve;
