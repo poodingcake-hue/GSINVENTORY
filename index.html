@@ -2015,10 +2015,6 @@
                 item.className = 'product-item';
                 if (currentProductCode === product.code) item.classList.add('selected');
 
-                var nameSpan = document.createElement('span');
-                nameSpan.className = 'product-name';
-                nameSpan.textContent = product.name;
-
                 var codeSpan = document.createElement('span');
                 codeSpan.className = 'product-code';
                 codeSpan.textContent = product.code;
@@ -2083,26 +2079,35 @@
             var newLocation = prompt('새로운 위치를 입력하세요:', currentLocation);
 
             if (newLocation !== null && newLocation !== currentLocation) {
-                showToast('위치 저장 중...');
+                // [낙관적 UI] 즉시 화면 반영 및 로컬 데이터 업데이트
+                var prevLocation = currentLocation;
+                document.getElementById('product-location').textContent = ' ' + newLocation;
+                
+                if (appData && appData.rawData) {
+                    appData.rawData.forEach(function (item) {
+                        if (item.productCode === currentProductCode) item.location = newLocation;
+                    });
+                }
+                showToast('위치 수정 중...');
+
                 callBackend('saveProductLocation', currentProductCode, newLocation)
                     .then(function (result) {
                         if (result.success) {
                             showToast('위치 수정 완료', true);
-                            document.getElementById('product-location').textContent = ' ' + newLocation;
-
-                            // 로컬 데이터 업데이트
-                            if (appData && appData.rawData) {
-                                appData.rawData.forEach(function (item) {
-                                    if (item.productCode === currentProductCode) item.location = newLocation;
-                                });
-                                localStorage.setItem('inventory_app_data', JSON.stringify(appData));
-                            }
+                            localStorage.setItem('inventory_app_data', JSON.stringify(appData));
                         } else {
-                            showToast('저장 실패');
+                            throw new Error('저장 실패');
                         }
                     })
                     .catch(function (err) {
-                        showToast('오류 발생');
+                        // [롤백] 실패 시 원래대로
+                        document.getElementById('product-location').textContent = ' ' + prevLocation;
+                        if (appData && appData.rawData) {
+                            appData.rawData.forEach(function (item) {
+                                if (item.productCode === currentProductCode) item.location = prevLocation;
+                            });
+                        }
+                        showToast('위치 저장 실패');
                         console.error(err);
                     });
             }
@@ -2308,14 +2313,25 @@
             var oldSize = item.dataset.size;
             var newSize = prompt('[' + hostName + '] 착장 사이즈 수정:', oldSize);
             if (newSize && newSize !== oldSize && confirm('수정하시겠습니까?')) {
+                // [낙관적 UI] 화면 즉시 업데이트
+                var outfit = appData.outfits.find(function (o) { return o.productCode === productCode && o.hostName === hostName && o.size === oldSize; });
+                if (outfit) outfit.size = newSize;
+                renderOutfits(productCode);
+                showToast('사이즈 수정 중...');
+
                 callBackend('updateOutfitSize', productCode, hostName, oldSize, newSize)
                     .then(function (result) {
                         if (result.success) {
                             showToast('수정 완료', true);
-                            var outfit = appData.outfits.find(function (o) { return o.productCode === productCode && o.hostName === hostName && o.size === oldSize; });
-                            if (outfit) outfit.size = newSize;
-                            renderOutfits(productCode);
-                        } else { showToast('수정 실패'); }
+                        } else {
+                            throw new Error('수정 실패');
+                        }
+                    })
+                    .catch(function (err) {
+                        // [롤백] 원래 사이즈로 복구
+                        if (outfit) outfit.size = oldSize;
+                        renderOutfits(productCode);
+                        showToast('수정 실패');
                     });
             }
         }
@@ -2362,20 +2378,34 @@
                 if (hostName && size) inputs.push({ productCode: productCode, hostName: hostName, size: size });
             }
             if (inputs.length === 0) { showToast('데이터 없음'); return; }
-            document.getElementById('confirm-outfit-btn').textContent = '저장 중...';
-            document.getElementById('confirm-outfit-btn').disabled = true;
 
+            // [낙관적 UI] 1. 기존 데이터 백업 (실패 대비)
+            var prevOutfits = JSON.parse(JSON.stringify(appData.outfits));
+
+            // [낙관적 UI] 2. 화면에 즉시 반영
+            appData.outfits.push(...inputs);
+            renderOutfits(productCode);
+            closeOutfitInputModal();
+            showToast('저장 시도 중 (백그라운드)...');
+
+            // [백그라운드 처리] 3. 실제 서버 전송
             callBackend('saveOutfitsBulk', inputs)
                 .then(function (result) {
                     if (result.success) {
-                        showToast(result.savedCount + '건 저장', true);
-                        if (result.newOutfits) appData.outfits.push(...result.newOutfits);
-                        renderOutfits(productCode);
-                        closeOutfitInputModal();
-                    } else { showToast('저장 실패'); }
+                        showToast(result.savedCount + '건 저장 완료', true);
+                        // 서버에서 준 최신 데이터로 최종 교체 (ID나 타임스탬프가 있을 수 있으므로)
+                        // 단, 낙관적으로 이미 추가했으므로 중복 방지를 위해 필터링 후 다시 넣거나 
+                        // 단순히 서버의 성공을 믿고 넘어갑니다. (여기서는 간단히 성공 알림만)
+                    } else {
+                        throw new Error('저장 실패');
+                    }
                 })
-                .catch(function () { showToast('통신 오류'); })
-                .finally(function () { document.getElementById('confirm-outfit-btn').disabled = false; });
+                .catch(function (err) {
+                    // [롤백] 4. 실패 시 원래대로 복구
+                    appData.outfits = prevOutfits;
+                    renderOutfits(productCode);
+                    showToast('저장 실패: 다시 시도해주세요.', false);
+                });
         }
 
         function addToCart(productCode, productName, color, size, maxQty, skuCode, location) {
