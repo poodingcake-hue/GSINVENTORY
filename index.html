@@ -51,25 +51,6 @@
 
 
 
-        /* 전역 스크롤바 디자인 개선 (속이 비어있는 회색 실선 테두리) */
-        ::-webkit-scrollbar {
-            width: 8px; /* 인식 가능한 충분한 두께 */
-        }
-
-        ::-webkit-scrollbar-track {
-            background: transparent !important;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: transparent !important; /* 내부를 투명하게 비우기 */
-            border: 1px solid #ddd !important; /* 훨씬 더 부드러운 회색 실선 테두리 */
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            border-color: #bbb !important; /* 호버 시에만 조금 더 선명하게 */
-        }
-
         /* 전체 레이아웃 */
         body {
             font-family: var(--font-family);
@@ -143,7 +124,7 @@
         }
 
         .section-header-with-line {
-            border-bottom: 1px solid #eee; /* 굵은 검은색 선을 연한 실선으로 변경 */
+            border-bottom: 1px solid var(--color-border-light);
             padding-bottom: 10px;
             margin-bottom: 15px;
             display: flex;
@@ -247,49 +228,52 @@
             color: #999;
         }
 
-        /* 2열: 상품 상세 헤더 (간결하게 복원) */
+        /* 2열: 상품 상세 */
         .info-header {
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-            gap: 15px;
-            margin-bottom: 8px;
-            padding-bottom: 4px;
-            border-bottom: none; /* 구분선 제거 */
-            text-align: left;
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            position: relative;
         }
 
         .info-location {
+            position: absolute;
+            left: 0;
+            top: 0;
             font-weight: 700;
             color: var(--color-accent);
             font-size: 1.1em;
             cursor: pointer;
             border-bottom: 1px dashed transparent;
-            min-width: fit-content;
+            transition: all 0.2s;
+        }
+
+        .info-location:hover {
+            border-bottom-color: var(--color-accent);
+            opacity: 0.8;
         }
 
         .info-name {
             font-size: 1.5rem;
             font-weight: 800;
             color: #333;
-            line-height: 1.2;
-            flex: 1; /* 남은 공간을 모두 차지 */
-            text-align: center; /* 해당 공간 내에서 가운데 정렬 */
-            word-break: break-all;
+            line-height: 1.3;
+            margin-top: 5px;
+            display: inline-block;
         }
 
         #product-image-container {
             margin-bottom: 20px;
             background: #fff;
             border-radius: 8px;
-            overflow: visible; /* 사용자의 요청대로 배지가 이미지 영역 밖으로 튀어나올 수 있도록 허용 */
+            overflow: hidden;
             border: 1px solid #f0f0f0;
             height: 45vh;
             /* 높이 45vh 고정 유지 */
             display: flex;
             align-items: center;
             justify-content: center;
-            position: relative; /* 배지의 플로팅 기준점 */
         }
 
         .main-image-wrapper {
@@ -336,10 +320,8 @@
         .inventory-table th,
         .inventory-table td {
             border: 1px solid #e0e0e0;
-            padding: 7px 4px; /* 글자가 커진 만큼 세로 여백을 줄여 전체 높이 유지 */
+            padding: 10px 5px;
             text-align: center;
-            font-size: 1.15em; /* 약 3pt 확대 */
-            font-weight: 500;
         }
 
         .inventory-table th {
@@ -1336,52 +1318,6 @@
             pointer-events: none !important;
             cursor: wait !important;
         }
-
-        /* 방송 일정 이미지 위 플로팅 배지 스타일 (안쪽으로 안전하게 이동) */
-        .broadcast-badges-container {
-            position: absolute;
-            right: -1.25vw; /* 요청대로 왼쪽으로 0.15vw 더 미세 조정 */
-            bottom: 15px; /* 이미지 위로 살짝 더 띄움 */
-            display: flex;
-            flex-direction: column-reverse;
-            gap: 4px;
-            align-items: flex-end;
-            pointer-events: none;
-            z-index: 1000;
-        }
-
-        .broadcast-badge {
-            padding: 2.5px 10px;
-            border-radius: 8px;
-            font-size: 11px;
-            font-weight: 800;
-            color: #fff;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3); /* 더 강조된 그림자로 플로팅 느낌 배가 */
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            white-space: nowrap;
-            letter-spacing: -0.01em;
-            animation: slideInBadge 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-        }
-
-        .broadcast-badge {
-            padding: 5px 12px;
-            border-radius: 12px;
-            font-size: 13px;
-            font-weight: 800;
-            color: #fff;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            white-space: nowrap;
-            letter-spacing: -0.02em;
-            animation: slideInBadge 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-        }
-
-        /* 사진 1의 선명한 컬러 테마 */
-        .badge-pink { background: #E95A8A; } /* 선명한 핑크 */
-        .badge-blue { background: #4687D1; } /* 선명한 블루 */
-        .badge-green { background: #11A775; } /* 선명한 그린 */
-        .badge-purple { background: #925FF2; }
-        .badge-orange { background: #F2923A; }
     </style>
 </head>
 
@@ -1426,12 +1362,10 @@
 
         <div id="col2" class="column">
             <div id="product-details-content" class="hidden">
-                <div id="product-image-container" style="position: relative;">
+                <div id="product-image-container">
                     <div class="main-image-wrapper">
                         <img id="product-image" src="" alt="상품 이미지">
                     </div>
-                    <!-- 알록달록한 방송 배지가 이미지 우측 하단에 다시 표시됩니다 -->
-                    <div id="broadcast-badges" class="broadcast-badges-container"></div>
                     <div id="product-gallery" class="image-gallery hidden"></div>
                 </div>
                 <div class="info-header">
@@ -1570,7 +1504,7 @@
                         <tr>
                             <td>3</td>
                             <td><input type="text" class="host-name" data-row="3" placeholder="이름"></td>
-                            <td><input type="text" class="outfit-size" data-row="4" placeholder="사이즈"></td>
+                            <td><input type="text" class="outfit-size" data-row="3" placeholder="사이즈"></td>
                         </tr>
                         <tr>
                             <td>4</td>
@@ -1831,6 +1765,8 @@
                     if (!appData.notes) appData.notes = {};
                     if (!appData.liveData) appData.liveData = [];
                     if (!appData.images) appData.images = {};
+                    if (!appData.outfits) appData.outfits = [];
+                    if (!appData.rentals) appData.rentals = [];
 
                     // 최신 데이터로 로컬 스토리지 업데이트
                     localStorage.setItem('inventory_app_data', JSON.stringify(data));
@@ -2219,15 +2155,7 @@
 
 
             singleImg.classList.add('fade-in');
-            singleImg.style.cursor = 'pointer';
-            singleImg.title = 'GS SHOP 상세페이지 열기';
-            singleImg.onclick = function () {
-                window.open('https://www.gsshop.com/prd/prd.gs?prdid=' + productCode, '_blank');
-            };
             galleryDiv.classList.add('hidden'); // 갤러리 숨김
-
-            // --- 방송 일정 배지 렌더링 ---
-            renderBroadcastBadges(productCode);
 
             var location = (inventoryData[0] ? inventoryData[0].location : 'N/A');
             var displayName = (inventoryData[0] ? inventoryData[0].productName : productName);
@@ -2251,42 +2179,6 @@
 
             renderOutfits(productCode);
             renderRentalHistory(productCode);
-        }
-
-        // 방송 일정 배지 생성 엔진 (헤더 우측 끝 가로 나열)
-        function renderBroadcastBadges(productCode) {
-            const container = document.getElementById('broadcast-badges');
-            container.innerHTML = '';
-
-            if (!appData || !appData.liveData) return;
-
-            // 현재 상품과 매칭되는 모든 방송 정보 추출
-            const schedules = appData.liveData.filter(item => item.productCode === productCode);
-            if (!schedules.length) return;
-
-            // 중복 시간 제거 및 정렬
-            const uniqueTimes = [...new Set(schedules.map(s => s.time))].sort();
-
-            const colors = ['badge-pink', 'badge-blue', 'badge-green', 'badge-purple', 'badge-orange'];
-            const days = ['일', '월', '화', '수', '목', '금', '토'];
-
-            uniqueTimes.forEach((time, index) => {
-                const badge = document.createElement('div');
-                badge.className = 'broadcast-badge ' + colors[index % colors.length];
-                
-                // 날짜 포맷팅: yyyy-MM-dd HH:mm -> M/D(요일) HH:mm
-                try {
-                    const d = new Date(time.replace(/-/g, '/'));
-                    const formatted = (d.getMonth() + 1) + '/' + d.getDate() + '(' + days[d.getDay()] + ') ' + 
-                                      String(d.getHours()).padStart(2, '0') + ':' + 
-                                      String(d.getMinutes()).padStart(2, '0');
-                    badge.textContent = formatted;
-                } catch(e) {
-                    badge.textContent = time;
-                }
-                
-                container.appendChild(badge);
-            });
         }
 
         // URL 생성 함수 확장
@@ -2379,6 +2271,11 @@
         function renderOutfits(productCode) {
             var div = document.getElementById('outfit-list');
             div.innerHTML = '';
+            if (!appData || !appData.outfits) {
+                if (appData && !appData.outfits) appData.outfits = [];
+                div.innerHTML = '<div class="loader">로딩 중...</div>';
+                return;
+            }
             var outfits = appData.outfits.filter(function (item) { return item.productCode === productCode; });
             if (!outfits.length) { div.innerHTML = '<div class="loader">내역 없음</div>'; return; }
 
@@ -2426,6 +2323,11 @@
         function renderRentalHistory(productCode) {
             var div = document.getElementById('rental-history-list');
             div.innerHTML = '';
+            if (!appData || !appData.rentals) {
+                if (appData && !appData.rentals) appData.rentals = [];
+                div.innerHTML = '<div class="loader">로딩 중...</div>';
+                return;
+            }
             var history = appData.rentals.filter(function (item) { return item.productCode === productCode && item.status === '대여중'; });
             if (!history.length) { div.innerHTML = '<div class="loader">대여중 내역 없음</div>'; return; }
 
@@ -3004,7 +2906,7 @@
             captureDiv.style.cssText = `
                 position: absolute; left: -9999px; top: -9999px;
                 display: flex; flex-direction: column; justify-content: center; width: 790px; height: 269px; 
-                padding: 10px; border: none; font-family: sans-serif; 
+                padding: 10px; border: 1px solid #e2e8f0; font-family: sans-serif; 
                 box-sizing: border-box; background: transparent;
             `;
 
@@ -3043,8 +2945,8 @@
 
             const style = document.createElement('style');
             style.innerHTML = `
-                #capture-table-wrapper table { border-collapse: collapse; width: 100%; border: 1px solid #eef1f6; table-layout: auto; background: transparent; }
-                #capture-table-wrapper th, #capture-table-wrapper td { border: 1px solid #eef1f6; padding: 3px 1px; text-align: center; color: #334155; font-weight: bold; background: transparent; white-space: nowrap; }
+                #capture-table-wrapper table { border-collapse: collapse; width: 100%; border: 1px solid #eef1f6; table-layout: fixed; background: transparent; }
+                #capture-table-wrapper th, #capture-table-wrapper td { border: 1px solid #eef1f6; padding: 3px 1px; text-align: center; color: #334155; font-weight: bold; background: transparent; }
                 #capture-table-wrapper th { background: rgba(0,0,0,0.03); color: #475569; }
                 #capture-table-wrapper thead th:first-child { color: #888; font-size: 0.8em; }
             `;
@@ -3079,7 +2981,7 @@
                         }
                     }
                     ctxTmp.putImageData(imgData, 0, 0);
-
+                    
                     // 신규 소스(투명 PNG) 적용 후 로딩 대기
                     await new Promise((resolve) => {
                         targetImg.onload = resolve;
