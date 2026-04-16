@@ -2015,6 +2015,10 @@
                 item.className = 'product-item';
                 if (currentProductCode === product.code) item.classList.add('selected');
 
+                var nameSpan = document.createElement('span');
+                nameSpan.className = 'product-name';
+                nameSpan.textContent = product.name;
+
                 var codeSpan = document.createElement('span');
                 codeSpan.className = 'product-code';
                 codeSpan.textContent = product.code;
